@@ -2,7 +2,6 @@
 title: "About Me"
 permalink: /about/
 header:
-  image: "/images/background-AI.jpg"
 ---
 
 I'm a junior data scientist, with a strong background in mathematical modeling, and a driven interest in machine learning and statistical data analysis.
