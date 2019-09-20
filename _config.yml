@@ -111,7 +111,7 @@ author:
   avatar           : # path of avatar image, e.g. "/assets/images/bio-photo.jpg"
   bio              : "Data Science Portfolio"
   location         : "Los Angeles, CA"
-  email            :
+  email            : "stylianouvasilis@gmail.com"
   links:
     - label: "Email"
       icon: "fas fa-fw fa-envelope-square"
