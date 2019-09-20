@@ -108,7 +108,7 @@ analytics:
 # Site Author
 author:
   name             : "Vasilis Stylianou, PhD"
-  avatar           : # path of avatar image, e.g. "/assets/images/bio-photo.jpg"
+  avatar           : "/images/bio-image.jpg" # path of avatar image, e.g. "/assets/images/bio-photo.jpg"
   bio              : "Data Science Portfolio"
   location         : "Los Angeles, CA"
   email            : "stylianouvasilis@gmail.com"
