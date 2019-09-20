@@ -112,6 +112,7 @@ author:
   bio              : "Data Science Portfolio"
   location         : "Los Angeles, CA"
   email            : "stylianouvasilis@gmail.com"
+  github           : "vasilis-stylianou/Data-Science"
   links:
     - label: "Email"
       icon: "fas fa-fw fa-envelope-square"
@@ -125,7 +126,7 @@ author:
     - label: "Facebook"
       icon: "fab fa-fw fa-facebook-square"
       # url: "https://facebook.com/"
-    - label: "vasilis-stylianou/Data-Science" #"GitHub"
+    - label: "GitHub"
       icon: "fab fa-fw fa-github"
       # url: "https://github.com/"
     - label: "Instagram"
