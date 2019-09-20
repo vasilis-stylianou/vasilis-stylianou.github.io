@@ -1,5 +1,5 @@
 ---
-title: "Data Analysis: Expenditures"
+title: "Data Aggregation: Expenditures"
 date: 2019-07-15
 tags: [data analysis, data science, pandas, numpy]
 excerpt: Data Analysis, Data Science, pandas, numpy
