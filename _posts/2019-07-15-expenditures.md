@@ -1,12 +1,9 @@
 ---
-title: "Data Aggregations: Expenditures"
+title: "Data Aggregations: Analyzing House Office Expenditures"
 date: 2019-07-15
 tags: [data analysis, data science, pandas, numpy]
 excerpt: Data Analysis, Data Science, pandas, numpy
 ---
-
-# Analyzing House Office Expenditure Data
-
 ## Intro:
 
 Members of Congress and Congressional offices receive an annual budget to spend on staff, supplies, transportation, and other expenses. Each quarter, representatives report the recipients of their expenditures. ProPublica complies these reports into research-ready CSV files and publishes them [here](https://projects.propublica.org/represent/expenditures). We will study the detailed (not summary) data.
