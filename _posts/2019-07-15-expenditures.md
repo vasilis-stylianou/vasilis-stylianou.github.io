@@ -7,8 +7,6 @@ excerpt: Data Analysis, Data Science, pandas, numpy
 
 # Analyzing House Office Expenditure Data
 
-## Intro:
-
 Members of Congress and Congressional offices receive an annual budget to spend on staff, supplies, transportation, and other expenses. Each quarter, representatives report the recipients of their expenditures. ProPublica complies these reports into research-ready CSV files and publishes them [here](https://projects.propublica.org/represent/expenditures). We will study the detailed (not summary) data.
 
 Note: There is an updated version of the 2015Q2 file in the zip archive; use this and discard the original. For convenience rename this file to "2015Q2-house-disburse-detail.csv".
@@ -249,6 +247,7 @@ sample.columns.tolist();
 
 ## Useful Functions
 
+A quick inspection of the "AMOUNT", "START DATE" and "END DATE" columns tells us that the corresponding values are not in the right format. In particular, some of the values in the "AMOUNT" column are in string format, and similarly we the values in the date's columns. It is therefore convenient to define the following two conversion functions which will use thoroughly throughout our data analysis.
 
 
 ```python
