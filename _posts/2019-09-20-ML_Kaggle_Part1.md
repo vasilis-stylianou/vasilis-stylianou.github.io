@@ -46,6 +46,7 @@ sns.set_style("dark")
 
 # Import data
 
+## i) Transactions
 
 ```python
 #trans data
@@ -3392,9 +3393,8 @@ dumpObjects(cols,path+'cols')
     Object saved!
 
 
-# Import data
 
-## Transaction data
+## ii) ID's
 
 
 ```python
@@ -3904,11 +3904,6 @@ df_train_test.to_csv('./Data/df_train_test_ids.csv',index=False)
 ```
 
 # Save categorical, numerical, and all columns
-
-
-```python
-from pickleObjects import *
-```
 
 
 ```python
