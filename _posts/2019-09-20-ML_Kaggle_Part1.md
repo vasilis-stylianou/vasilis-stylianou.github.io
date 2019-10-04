@@ -5,10 +5,24 @@ tags: [machine learning, data science, pandas, numpy]
 excerpt: Machine Learning, Feature Engineering, pandas, numpy
 ---
 
+# Intro:
+The following work was done during the Kaggle competition https://www.kaggle.com/c/ieee-fraud-detection. Vesta Corporation provided the following four datasets:
+- train_{transaction, identity}.csv - the training set
+- test_{transaction, identity}.csv - the test set
+and competitors were asked to predict the probability of a card transaction being fraudulent. Submissions were evaluated on area under the ROC curve between the predicted probability (of the test set) and the observed target.
 
-# Dependencies
+# Approach:
+I divided my work to four steps:
+1. Data Cleaning
+2. Feature Engineering
+3. Feature Selection and Preprocessing
+4. Model Training/Evaluation/Selection
 
+In this first part I cover steps 1-3. During the completion of this project my work was distributed among various python scripts and jupyter notebooks, which you can find in my github.
 
+# Step 1: Data Cleaning
+
+# Libraries
 ```python
 import numpy as np
 import pandas as pd
