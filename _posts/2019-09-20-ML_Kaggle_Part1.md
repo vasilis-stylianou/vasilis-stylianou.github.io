@@ -12,7 +12,7 @@ The following work was done during the Kaggle competition -  [IEEE-CIS Fraud Det
 
 and were asked to predict the probability of a card transaction being fraudulent. Submissions were evaluated on area under the ROC curve between the predicted probability (of the test set) and the observed target.
 
-# Approach:
+# Index:
 I divided my work to four steps:
 1. Data Cleaning
 2. Feature Engineering
@@ -21,7 +21,7 @@ I divided my work to four steps:
 
 In this post I cover steps 1-3.
 
-Note: During the completion of this project my work was distributed among various python scripts and jupyter notebooks, which you can find in my github.
+Note: During the completion of this project my work was distributed among a number of python scripts and jupyter notebooks. In this presentation I have concatenated everything together but for the sake of brevity I left out some of the utility scripts and I refer the reader to my github for more details.
 
 # Step 1: Data Cleaning
 
