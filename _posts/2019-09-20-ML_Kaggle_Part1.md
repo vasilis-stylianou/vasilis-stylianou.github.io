@@ -3291,8 +3291,7 @@ df_test_trans.head(3)
 
 
 
-### Transactions
-
+Describe how the TableDescriptor works and why we need it
 
 ```python
 trans = TableDescriptor(df_train_trans,'Transaction_df','isFraud')
@@ -3313,8 +3312,6 @@ len(trans.variables)
 
 
 
-# Join transactions and ids
-
 ## NaNs_rate
 
 
@@ -3334,7 +3331,7 @@ numerical_vars,categorical_vars= numerical_categorical_split(low_nan_vars,min_ca
     No of categorical features: 55
 
 
-# Clustering imputation method
+## Clustering imputation method
 
 
 ```python
@@ -3369,7 +3366,7 @@ df_train_test.shape
 df_train_test.to_csv('./Data/df_train_test.csv',index=False)
 ```
 
-# Save categorical, numerical, and all columns
+## Save categorical, numerical, and all columns
 
 
 ```python
@@ -3394,7 +3391,7 @@ dumpObjects(cols,path+'cols')
 
 
 
-## ii) ID's
+## ii) IDs
 
 
 ```python
@@ -3825,7 +3822,7 @@ df_test_ids.head(3)
 
 
 
-### Transactions
+blabla
 
 
 ```python
@@ -3849,7 +3846,6 @@ len(trans.variables)
 
 
 
-# Join transactions and ids
 
 ## NaNs_rate
 
@@ -3870,7 +3866,7 @@ numerical_vars,categorical_vars= numerical_categorical_split(low_nan_vars,min_ca
     No of categorical features: 11
 
 
-# Clustering imputation method
+## Clustering imputation method
 
 
 ```python
@@ -3903,7 +3899,7 @@ df_train_test.shape
 df_train_test.to_csv('./Data/df_train_test_ids.csv',index=False)
 ```
 
-# Save categorical, numerical, and all columns
+## Save categorical, numerical, and all columns
 
 
 ```python
