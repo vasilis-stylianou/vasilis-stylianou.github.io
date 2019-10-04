@@ -3829,8 +3829,7 @@ blabla
 trans = TableDescriptor(df_train_ids,'Transaction_df','isFraud')
 ```
 
-      0%|          | 0/42 [00:00<?, ?it/s]/home/panas1989/anaconda3/envs/kaggle_fraud/lib/python3.7/site-packages/scipy/stats/stats.py:3038: RuntimeWarning: invalid value encountered in double_scalars
-      r = r_num / r_den
+
     100%|██████████| 42/42 [00:00<00:00, 42.39it/s]
 
 
