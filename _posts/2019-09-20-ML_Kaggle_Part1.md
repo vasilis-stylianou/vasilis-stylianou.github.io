@@ -3374,542 +3374,543 @@ dumpObjects(cols,path+'cols')
     Object saved!
     Object saved!
 
-    # Import data
-
-    ## Transaction data
-
-
-    ```python
-    #trans data
-    #df_train_trans = import_data('./Data/train_transaction.csv',nrows=1000)
-    df_train_ids = pd.read_csv('./Data/train_identity.csv')
-    df_test_ids = pd.read_csv('./Data/test_identity.csv')
-    ```
-
-
-    ```python
-    df_train_ids['isFraud'] = [1]*len(df_train_ids)
-    df_train_ids.head(3)
-    ```
-
-
-
-
-    <div>
-    <style scoped>
-        .dataframe tbody tr th:only-of-type {
-            vertical-align: middle;
-        }
-
-        .dataframe tbody tr th {
-            vertical-align: top;
-        }
-
-        .dataframe thead th {
-            text-align: right;
-        }
-    </style>
-    <table border="1" class="dataframe">
-      <thead>
-        <tr style="text-align: right;">
-          <th></th>
-          <th>TransactionID</th>
-          <th>id_01</th>
-          <th>id_02</th>
-          <th>id_03</th>
-          <th>id_04</th>
-          <th>id_05</th>
-          <th>id_06</th>
-          <th>id_07</th>
-          <th>id_08</th>
-          <th>id_09</th>
-          <th>id_10</th>
-          <th>id_11</th>
-          <th>id_12</th>
-          <th>id_13</th>
-          <th>id_14</th>
-          <th>id_15</th>
-          <th>id_16</th>
-          <th>id_17</th>
-          <th>id_18</th>
-          <th>id_19</th>
-          <th>id_20</th>
-          <th>id_21</th>
-          <th>id_22</th>
-          <th>id_23</th>
-          <th>id_24</th>
-          <th>id_25</th>
-          <th>id_26</th>
-          <th>id_27</th>
-          <th>id_28</th>
-          <th>id_29</th>
-          <th>id_30</th>
-          <th>id_31</th>
-          <th>id_32</th>
-          <th>id_33</th>
-          <th>id_34</th>
-          <th>id_35</th>
-          <th>id_36</th>
-          <th>id_37</th>
-          <th>id_38</th>
-          <th>DeviceType</th>
-          <th>DeviceInfo</th>
-          <th>isFraud</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <th>0</th>
-          <td>2987004</td>
-          <td>0.0</td>
-          <td>70787.0</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>100.0</td>
-          <td>NotFound</td>
-          <td>NaN</td>
-          <td>-480.0</td>
-          <td>New</td>
-          <td>NotFound</td>
-          <td>166.0</td>
-          <td>NaN</td>
-          <td>542.0</td>
-          <td>144.0</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>New</td>
-          <td>NotFound</td>
-          <td>Android 7.0</td>
-          <td>samsung browser 6.2</td>
-          <td>32.0</td>
-          <td>2220x1080</td>
-          <td>match_status:2</td>
-          <td>T</td>
-          <td>F</td>
-          <td>T</td>
-          <td>T</td>
-          <td>mobile</td>
-          <td>SAMSUNG SM-G892A Build/NRD90M</td>
-          <td>1</td>
-        </tr>
-        <tr>
-          <th>1</th>
-          <td>2987008</td>
-          <td>-5.0</td>
-          <td>98945.0</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>0.0</td>
-          <td>-5.0</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>100.0</td>
-          <td>NotFound</td>
-          <td>49.0</td>
-          <td>-300.0</td>
-          <td>New</td>
-          <td>NotFound</td>
-          <td>166.0</td>
-          <td>NaN</td>
-          <td>621.0</td>
-          <td>500.0</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>New</td>
-          <td>NotFound</td>
-          <td>iOS 11.1.2</td>
-          <td>mobile safari 11.0</td>
-          <td>32.0</td>
-          <td>1334x750</td>
-          <td>match_status:1</td>
-          <td>T</td>
-          <td>F</td>
-          <td>F</td>
-          <td>T</td>
-          <td>mobile</td>
-          <td>iOS Device</td>
-          <td>1</td>
-        </tr>
-        <tr>
-          <th>2</th>
-          <td>2987010</td>
-          <td>-5.0</td>
-          <td>191631.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>100.0</td>
-          <td>NotFound</td>
-          <td>52.0</td>
-          <td>NaN</td>
-          <td>Found</td>
-          <td>Found</td>
-          <td>121.0</td>
-          <td>NaN</td>
-          <td>410.0</td>
-          <td>142.0</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>Found</td>
-          <td>Found</td>
-          <td>NaN</td>
-          <td>chrome 62.0</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>F</td>
-          <td>F</td>
-          <td>T</td>
-          <td>T</td>
-          <td>desktop</td>
-          <td>Windows</td>
-          <td>1</td>
-        </tr>
-      </tbody>
-    </table>
-    </div>
-
-
-
-
-    ```python
-    df_test_ids.head(3)
-    ```
-
-
-
-
-    <div>
-    <style scoped>
-        .dataframe tbody tr th:only-of-type {
-            vertical-align: middle;
-        }
-
-        .dataframe tbody tr th {
-            vertical-align: top;
-        }
-
-        .dataframe thead th {
-            text-align: right;
-        }
-    </style>
-    <table border="1" class="dataframe">
-      <thead>
-        <tr style="text-align: right;">
-          <th></th>
-          <th>TransactionID</th>
-          <th>id_01</th>
-          <th>id_02</th>
-          <th>id_03</th>
-          <th>id_04</th>
-          <th>id_05</th>
-          <th>id_06</th>
-          <th>id_07</th>
-          <th>id_08</th>
-          <th>id_09</th>
-          <th>id_10</th>
-          <th>id_11</th>
-          <th>id_12</th>
-          <th>id_13</th>
-          <th>id_14</th>
-          <th>id_15</th>
-          <th>id_16</th>
-          <th>id_17</th>
-          <th>id_18</th>
-          <th>id_19</th>
-          <th>id_20</th>
-          <th>id_21</th>
-          <th>id_22</th>
-          <th>id_23</th>
-          <th>id_24</th>
-          <th>id_25</th>
-          <th>id_26</th>
-          <th>id_27</th>
-          <th>id_28</th>
-          <th>id_29</th>
-          <th>id_30</th>
-          <th>id_31</th>
-          <th>id_32</th>
-          <th>id_33</th>
-          <th>id_34</th>
-          <th>id_35</th>
-          <th>id_36</th>
-          <th>id_37</th>
-          <th>id_38</th>
-          <th>DeviceType</th>
-          <th>DeviceInfo</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <th>0</th>
-          <td>3663586</td>
-          <td>-45.0</td>
-          <td>280290.0</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>100.0</td>
-          <td>NotFound</td>
-          <td>27.0</td>
-          <td>NaN</td>
-          <td>New</td>
-          <td>NotFound</td>
-          <td>225.0</td>
-          <td>15.0</td>
-          <td>427.0</td>
-          <td>563.0</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>New</td>
-          <td>NotFound</td>
-          <td>NaN</td>
-          <td>chrome 67.0 for android</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>F</td>
-          <td>F</td>
-          <td>T</td>
-          <td>F</td>
-          <td>mobile</td>
-          <td>MYA-L13 Build/HUAWEIMYA-L13</td>
-        </tr>
-        <tr>
-          <th>1</th>
-          <td>3663588</td>
-          <td>0.0</td>
-          <td>3579.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>100.0</td>
-          <td>Found</td>
-          <td>NaN</td>
-          <td>-300.0</td>
-          <td>Found</td>
-          <td>Found</td>
-          <td>166.0</td>
-          <td>NaN</td>
-          <td>542.0</td>
-          <td>368.0</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>Found</td>
-          <td>Found</td>
-          <td>Android 6.0.1</td>
-          <td>chrome 67.0 for android</td>
-          <td>24.0</td>
-          <td>1280x720</td>
-          <td>match_status:2</td>
-          <td>T</td>
-          <td>F</td>
-          <td>T</td>
-          <td>T</td>
-          <td>mobile</td>
-          <td>LGLS676 Build/MXB48T</td>
-        </tr>
-        <tr>
-          <th>2</th>
-          <td>3663597</td>
-          <td>-5.0</td>
-          <td>185210.0</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>1.0</td>
-          <td>0.0</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>100.0</td>
-          <td>NotFound</td>
-          <td>52.0</td>
-          <td>-360.0</td>
-          <td>New</td>
-          <td>NotFound</td>
-          <td>225.0</td>
-          <td>NaN</td>
-          <td>271.0</td>
-          <td>507.0</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>New</td>
-          <td>NotFound</td>
-          <td>NaN</td>
-          <td>ie 11.0 for tablet</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>F</td>
-          <td>T</td>
-          <td>T</td>
-          <td>F</td>
-          <td>desktop</td>
-          <td>Trident/7.0</td>
-        </tr>
-      </tbody>
-    </table>
-    </div>
-
-
-
-    ### Transactions
-
-
-    ```python
-    trans = TableDescriptor(df_train_ids,'Transaction_df','isFraud')
-    ```
-
-          0%|          | 0/42 [00:00<?, ?it/s]/home/panas1989/anaconda3/envs/kaggle_fraud/lib/python3.7/site-packages/scipy/stats/stats.py:3038: RuntimeWarning: invalid value encountered in double_scalars
-          r = r_num / r_den
-        100%|██████████| 42/42 [00:00<00:00, 42.39it/s]
-
-
-
-    ```python
-    len(trans.variables)
-    ```
-
-
-
-
-        42
-
-
-
-    # Join transactions and ids
-
-    ## NaNs_rate
-
-
-    ```python
-    low_nan_vars=getCompletedVars(trans,nans_rate_cut_off = 0.025)
-    ```
-
-        Selected features: 14/42
-
-
-
-    ```python
-    numerical_vars,categorical_vars= numerical_categorical_split(low_nan_vars,min_categories=300)
-    ```
-
-        No of numerical features: 3
-        No of categorical features: 11
-
-
-    # Clustering imputation method
-
-
-    ```python
-    cols = [var.name for var in low_nan_vars if var.name != 'isFraud']
-    ```
-
-
-    ```python
-    all_cols = ['TransactionID']+ cols
-
-    df_train_test = df_train_ids[all_cols].append(df_test_ids[all_cols],
-                                                  ignore_index=True)
-    ```
-
-
-    ```python
-    df_train_test.shape
-    ```
-
-
-
-
-        (286140, 14)
-
-
-
-
-    ```python
-    #save dataframe to save memory
-    df_train_test.to_csv('./Data/df_train_test_ids.csv',index=False)
-    ```
-
-    # Save categorical, numerical, and all columns
-
-
-    ```python
-    from pickleObjects import *
-    ```
-
-
-    ```python
-    path = './Data/'
-    ```
-
-
-    ```python
-    num_cols = [var.name for var in numerical_vars if var.name not in ['TransactionID','isFraud']]
-    cat_cols = [var.name for var in categorical_vars if var.name not in ['TransactionID','isFraud']]
-    ```
-
-
-    ```python
-    dumpObjects(cat_cols,path+'cat_cols_ids')
-    dumpObjects(num_cols,path+'num_cols_ids')
-    dumpObjects(cols,path+'cols_ids')
-    ```
-
-        Object saved!
-        Object saved!
-        Object saved!
+
+# Import data
+
+## Transaction data
+
+
+```python
+#trans data
+#df_train_trans = import_data('./Data/train_transaction.csv',nrows=1000)
+df_train_ids = pd.read_csv('./Data/train_identity.csv')
+df_test_ids = pd.read_csv('./Data/test_identity.csv')
+```
+
+
+```python
+df_train_ids['isFraud'] = [1]*len(df_train_ids)
+df_train_ids.head(3)
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>TransactionID</th>
+      <th>id_01</th>
+      <th>id_02</th>
+      <th>id_03</th>
+      <th>id_04</th>
+      <th>id_05</th>
+      <th>id_06</th>
+      <th>id_07</th>
+      <th>id_08</th>
+      <th>id_09</th>
+      <th>id_10</th>
+      <th>id_11</th>
+      <th>id_12</th>
+      <th>id_13</th>
+      <th>id_14</th>
+      <th>id_15</th>
+      <th>id_16</th>
+      <th>id_17</th>
+      <th>id_18</th>
+      <th>id_19</th>
+      <th>id_20</th>
+      <th>id_21</th>
+      <th>id_22</th>
+      <th>id_23</th>
+      <th>id_24</th>
+      <th>id_25</th>
+      <th>id_26</th>
+      <th>id_27</th>
+      <th>id_28</th>
+      <th>id_29</th>
+      <th>id_30</th>
+      <th>id_31</th>
+      <th>id_32</th>
+      <th>id_33</th>
+      <th>id_34</th>
+      <th>id_35</th>
+      <th>id_36</th>
+      <th>id_37</th>
+      <th>id_38</th>
+      <th>DeviceType</th>
+      <th>DeviceInfo</th>
+      <th>isFraud</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>2987004</td>
+      <td>0.0</td>
+      <td>70787.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>100.0</td>
+      <td>NotFound</td>
+      <td>NaN</td>
+      <td>-480.0</td>
+      <td>New</td>
+      <td>NotFound</td>
+      <td>166.0</td>
+      <td>NaN</td>
+      <td>542.0</td>
+      <td>144.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>New</td>
+      <td>NotFound</td>
+      <td>Android 7.0</td>
+      <td>samsung browser 6.2</td>
+      <td>32.0</td>
+      <td>2220x1080</td>
+      <td>match_status:2</td>
+      <td>T</td>
+      <td>F</td>
+      <td>T</td>
+      <td>T</td>
+      <td>mobile</td>
+      <td>SAMSUNG SM-G892A Build/NRD90M</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2987008</td>
+      <td>-5.0</td>
+      <td>98945.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.0</td>
+      <td>-5.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>100.0</td>
+      <td>NotFound</td>
+      <td>49.0</td>
+      <td>-300.0</td>
+      <td>New</td>
+      <td>NotFound</td>
+      <td>166.0</td>
+      <td>NaN</td>
+      <td>621.0</td>
+      <td>500.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>New</td>
+      <td>NotFound</td>
+      <td>iOS 11.1.2</td>
+      <td>mobile safari 11.0</td>
+      <td>32.0</td>
+      <td>1334x750</td>
+      <td>match_status:1</td>
+      <td>T</td>
+      <td>F</td>
+      <td>F</td>
+      <td>T</td>
+      <td>mobile</td>
+      <td>iOS Device</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2987010</td>
+      <td>-5.0</td>
+      <td>191631.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>100.0</td>
+      <td>NotFound</td>
+      <td>52.0</td>
+      <td>NaN</td>
+      <td>Found</td>
+      <td>Found</td>
+      <td>121.0</td>
+      <td>NaN</td>
+      <td>410.0</td>
+      <td>142.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>Found</td>
+      <td>Found</td>
+      <td>NaN</td>
+      <td>chrome 62.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>F</td>
+      <td>F</td>
+      <td>T</td>
+      <td>T</td>
+      <td>desktop</td>
+      <td>Windows</td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
+df_test_ids.head(3)
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>TransactionID</th>
+      <th>id_01</th>
+      <th>id_02</th>
+      <th>id_03</th>
+      <th>id_04</th>
+      <th>id_05</th>
+      <th>id_06</th>
+      <th>id_07</th>
+      <th>id_08</th>
+      <th>id_09</th>
+      <th>id_10</th>
+      <th>id_11</th>
+      <th>id_12</th>
+      <th>id_13</th>
+      <th>id_14</th>
+      <th>id_15</th>
+      <th>id_16</th>
+      <th>id_17</th>
+      <th>id_18</th>
+      <th>id_19</th>
+      <th>id_20</th>
+      <th>id_21</th>
+      <th>id_22</th>
+      <th>id_23</th>
+      <th>id_24</th>
+      <th>id_25</th>
+      <th>id_26</th>
+      <th>id_27</th>
+      <th>id_28</th>
+      <th>id_29</th>
+      <th>id_30</th>
+      <th>id_31</th>
+      <th>id_32</th>
+      <th>id_33</th>
+      <th>id_34</th>
+      <th>id_35</th>
+      <th>id_36</th>
+      <th>id_37</th>
+      <th>id_38</th>
+      <th>DeviceType</th>
+      <th>DeviceInfo</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>3663586</td>
+      <td>-45.0</td>
+      <td>280290.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>100.0</td>
+      <td>NotFound</td>
+      <td>27.0</td>
+      <td>NaN</td>
+      <td>New</td>
+      <td>NotFound</td>
+      <td>225.0</td>
+      <td>15.0</td>
+      <td>427.0</td>
+      <td>563.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>New</td>
+      <td>NotFound</td>
+      <td>NaN</td>
+      <td>chrome 67.0 for android</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>F</td>
+      <td>F</td>
+      <td>T</td>
+      <td>F</td>
+      <td>mobile</td>
+      <td>MYA-L13 Build/HUAWEIMYA-L13</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>3663588</td>
+      <td>0.0</td>
+      <td>3579.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>100.0</td>
+      <td>Found</td>
+      <td>NaN</td>
+      <td>-300.0</td>
+      <td>Found</td>
+      <td>Found</td>
+      <td>166.0</td>
+      <td>NaN</td>
+      <td>542.0</td>
+      <td>368.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>Found</td>
+      <td>Found</td>
+      <td>Android 6.0.1</td>
+      <td>chrome 67.0 for android</td>
+      <td>24.0</td>
+      <td>1280x720</td>
+      <td>match_status:2</td>
+      <td>T</td>
+      <td>F</td>
+      <td>T</td>
+      <td>T</td>
+      <td>mobile</td>
+      <td>LGLS676 Build/MXB48T</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3663597</td>
+      <td>-5.0</td>
+      <td>185210.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>100.0</td>
+      <td>NotFound</td>
+      <td>52.0</td>
+      <td>-360.0</td>
+      <td>New</td>
+      <td>NotFound</td>
+      <td>225.0</td>
+      <td>NaN</td>
+      <td>271.0</td>
+      <td>507.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>New</td>
+      <td>NotFound</td>
+      <td>NaN</td>
+      <td>ie 11.0 for tablet</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>F</td>
+      <td>T</td>
+      <td>T</td>
+      <td>F</td>
+      <td>desktop</td>
+      <td>Trident/7.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+### Transactions
+
+
+```python
+trans = TableDescriptor(df_train_ids,'Transaction_df','isFraud')
+```
+
+      0%|          | 0/42 [00:00<?, ?it/s]/home/panas1989/anaconda3/envs/kaggle_fraud/lib/python3.7/site-packages/scipy/stats/stats.py:3038: RuntimeWarning: invalid value encountered in double_scalars
+      r = r_num / r_den
+    100%|██████████| 42/42 [00:00<00:00, 42.39it/s]
+
+
+
+```python
+len(trans.variables)
+```
+
+
+
+
+    42
+
+
+
+# Join transactions and ids
+
+## NaNs_rate
+
+
+```python
+low_nan_vars=getCompletedVars(trans,nans_rate_cut_off = 0.025)
+```
+
+    Selected features: 14/42
+
+
+
+```python
+numerical_vars,categorical_vars= numerical_categorical_split(low_nan_vars,min_categories=300)
+```
+
+    No of numerical features: 3
+    No of categorical features: 11
+
+
+# Clustering imputation method
+
+
+```python
+cols = [var.name for var in low_nan_vars if var.name != 'isFraud']
+```
+
+
+```python
+all_cols = ['TransactionID']+ cols
+
+df_train_test = df_train_ids[all_cols].append(df_test_ids[all_cols],
+                                              ignore_index=True)
+```
+
+
+```python
+df_train_test.shape
+```
+
+
+
+
+    (286140, 14)
+
+
+
+
+```python
+#save dataframe to save memory
+df_train_test.to_csv('./Data/df_train_test_ids.csv',index=False)
+```
+
+# Save categorical, numerical, and all columns
+
+
+```python
+from pickleObjects import *
+```
+
+
+```python
+path = './Data/'
+```
+
+
+```python
+num_cols = [var.name for var in numerical_vars if var.name not in ['TransactionID','isFraud']]
+cat_cols = [var.name for var in categorical_vars if var.name not in ['TransactionID','isFraud']]
+```
+
+
+```python
+dumpObjects(cat_cols,path+'cat_cols_ids')
+dumpObjects(num_cols,path+'num_cols_ids')
+dumpObjects(cols,path+'cols_ids')
+```
+
+    Object saved!
+    Object saved!
+    Object saved!
