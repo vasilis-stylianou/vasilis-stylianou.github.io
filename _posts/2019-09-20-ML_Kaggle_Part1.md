@@ -6,15 +6,13 @@ excerpt: Machine Learning, Feature Engineering, pandas, numpy
 ---
 
 
-# Libraries
+# Dependencies
 
 
 ```python
 import numpy as np
 import pandas as pd
 from fraud_pre_proc import *
-from fraud_feat_engineering import *
-
 
 pd.set_option('display.max_rows', 500)
 pd.set_option('display.max_columns', 500)
@@ -29,349 +27,3331 @@ sns.set_style("dark")
 
 ```
 
-# Tuning knobs
-
-### 1. Data Cleaning
-A. Number of low NaN-rate features: nans_rate_cut_off (parameter) <br>
-B.
-- Numerical_categorical split: min_categories (parameter)
-- Methods to fill NaNs: Vasilis or Papes  <br>
-
-### 2. Feature Engineering
-A. Which Datetime Feats to add: select manually <br>
-B1. Which Card-Address Interaction Feats to add: : select manually <br>
-B2. Which Card-Address-Datetime Interaction Feats to add:<br>
-$\quad$ i) period_feats (list)<br>
-$\quad$ ii) card_addr_feats (list)<br>
-C. Which Aggregated TransAmt Feats to add: select manually <br>
-D. Which Frequency Feats to add: select manually <br>
-
-### 3. Preprocessing and Feature Selection
-Numerical_categorical split: min_categories (parameter)<br>
-A. Number of highly correlated features: corr_cut_off (parameter) <br>
-B. Method of treating categorical feats: how = {'dummies','label_enc'} <br>
-
-### 4. Stratified Split
-- Stratified split parameters: frac, n_splits<br>
-- (PCA)
-
-# 0. Import data
+# Import data
 
 
 ```python
 #trans data
-df_train_trans = import_data('./Data/train_transaction.csv',nrows=20000)
-df_train_trans.head(3);
-df_train_trans.shape
+#df_train_trans = import_data('./Data/train_transaction.csv',nrows=1000)
+df_train_trans = pd.read_csv('./Data/train_transaction.csv')
+df_test_trans = pd.read_csv('./Data/test_transaction.csv')
 ```
 
-    Memory usage of dataframe is 60.12 MB --> 16.77 MB (Decreased by 72.1%)
+
+```python
+df_train_trans.head(3)
+```
 
 
 
 
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
 
-    (20000, 394)
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>TransactionID</th>
+      <th>isFraud</th>
+      <th>TransactionDT</th>
+      <th>TransactionAmt</th>
+      <th>ProductCD</th>
+      <th>card1</th>
+      <th>card2</th>
+      <th>card3</th>
+      <th>card4</th>
+      <th>card5</th>
+      <th>card6</th>
+      <th>addr1</th>
+      <th>addr2</th>
+      <th>dist1</th>
+      <th>dist2</th>
+      <th>P_emaildomain</th>
+      <th>R_emaildomain</th>
+      <th>C1</th>
+      <th>C2</th>
+      <th>C3</th>
+      <th>C4</th>
+      <th>C5</th>
+      <th>C6</th>
+      <th>C7</th>
+      <th>C8</th>
+      <th>C9</th>
+      <th>C10</th>
+      <th>C11</th>
+      <th>C12</th>
+      <th>C13</th>
+      <th>C14</th>
+      <th>D1</th>
+      <th>D2</th>
+      <th>D3</th>
+      <th>D4</th>
+      <th>D5</th>
+      <th>D6</th>
+      <th>D7</th>
+      <th>D8</th>
+      <th>D9</th>
+      <th>D10</th>
+      <th>D11</th>
+      <th>D12</th>
+      <th>D13</th>
+      <th>D14</th>
+      <th>D15</th>
+      <th>M1</th>
+      <th>M2</th>
+      <th>M3</th>
+      <th>M4</th>
+      <th>M5</th>
+      <th>M6</th>
+      <th>M7</th>
+      <th>M8</th>
+      <th>M9</th>
+      <th>V1</th>
+      <th>V2</th>
+      <th>V3</th>
+      <th>V4</th>
+      <th>V5</th>
+      <th>V6</th>
+      <th>V7</th>
+      <th>V8</th>
+      <th>V9</th>
+      <th>V10</th>
+      <th>V11</th>
+      <th>V12</th>
+      <th>V13</th>
+      <th>V14</th>
+      <th>V15</th>
+      <th>V16</th>
+      <th>V17</th>
+      <th>V18</th>
+      <th>V19</th>
+      <th>V20</th>
+      <th>V21</th>
+      <th>V22</th>
+      <th>V23</th>
+      <th>V24</th>
+      <th>V25</th>
+      <th>V26</th>
+      <th>V27</th>
+      <th>V28</th>
+      <th>V29</th>
+      <th>V30</th>
+      <th>V31</th>
+      <th>V32</th>
+      <th>V33</th>
+      <th>V34</th>
+      <th>V35</th>
+      <th>V36</th>
+      <th>V37</th>
+      <th>V38</th>
+      <th>V39</th>
+      <th>V40</th>
+      <th>V41</th>
+      <th>V42</th>
+      <th>V43</th>
+      <th>V44</th>
+      <th>V45</th>
+      <th>V46</th>
+      <th>V47</th>
+      <th>V48</th>
+      <th>V49</th>
+      <th>V50</th>
+      <th>V51</th>
+      <th>V52</th>
+      <th>V53</th>
+      <th>V54</th>
+      <th>V55</th>
+      <th>V56</th>
+      <th>V57</th>
+      <th>V58</th>
+      <th>V59</th>
+      <th>V60</th>
+      <th>V61</th>
+      <th>V62</th>
+      <th>V63</th>
+      <th>V64</th>
+      <th>V65</th>
+      <th>V66</th>
+      <th>V67</th>
+      <th>V68</th>
+      <th>V69</th>
+      <th>V70</th>
+      <th>V71</th>
+      <th>V72</th>
+      <th>V73</th>
+      <th>V74</th>
+      <th>V75</th>
+      <th>V76</th>
+      <th>V77</th>
+      <th>V78</th>
+      <th>V79</th>
+      <th>V80</th>
+      <th>V81</th>
+      <th>V82</th>
+      <th>V83</th>
+      <th>V84</th>
+      <th>V85</th>
+      <th>V86</th>
+      <th>V87</th>
+      <th>V88</th>
+      <th>V89</th>
+      <th>V90</th>
+      <th>V91</th>
+      <th>V92</th>
+      <th>V93</th>
+      <th>V94</th>
+      <th>V95</th>
+      <th>V96</th>
+      <th>V97</th>
+      <th>V98</th>
+      <th>V99</th>
+      <th>V100</th>
+      <th>V101</th>
+      <th>V102</th>
+      <th>V103</th>
+      <th>V104</th>
+      <th>V105</th>
+      <th>V106</th>
+      <th>V107</th>
+      <th>V108</th>
+      <th>V109</th>
+      <th>V110</th>
+      <th>V111</th>
+      <th>V112</th>
+      <th>V113</th>
+      <th>V114</th>
+      <th>V115</th>
+      <th>V116</th>
+      <th>V117</th>
+      <th>V118</th>
+      <th>V119</th>
+      <th>V120</th>
+      <th>V121</th>
+      <th>V122</th>
+      <th>V123</th>
+      <th>V124</th>
+      <th>V125</th>
+      <th>V126</th>
+      <th>V127</th>
+      <th>V128</th>
+      <th>V129</th>
+      <th>V130</th>
+      <th>V131</th>
+      <th>V132</th>
+      <th>V133</th>
+      <th>V134</th>
+      <th>V135</th>
+      <th>V136</th>
+      <th>V137</th>
+      <th>V138</th>
+      <th>V139</th>
+      <th>V140</th>
+      <th>V141</th>
+      <th>V142</th>
+      <th>V143</th>
+      <th>V144</th>
+      <th>V145</th>
+      <th>V146</th>
+      <th>V147</th>
+      <th>V148</th>
+      <th>V149</th>
+      <th>V150</th>
+      <th>V151</th>
+      <th>V152</th>
+      <th>V153</th>
+      <th>V154</th>
+      <th>V155</th>
+      <th>V156</th>
+      <th>V157</th>
+      <th>V158</th>
+      <th>V159</th>
+      <th>V160</th>
+      <th>V161</th>
+      <th>V162</th>
+      <th>V163</th>
+      <th>V164</th>
+      <th>V165</th>
+      <th>V166</th>
+      <th>V167</th>
+      <th>V168</th>
+      <th>V169</th>
+      <th>V170</th>
+      <th>V171</th>
+      <th>V172</th>
+      <th>V173</th>
+      <th>V174</th>
+      <th>V175</th>
+      <th>V176</th>
+      <th>V177</th>
+      <th>V178</th>
+      <th>V179</th>
+      <th>V180</th>
+      <th>V181</th>
+      <th>V182</th>
+      <th>V183</th>
+      <th>V184</th>
+      <th>V185</th>
+      <th>V186</th>
+      <th>V187</th>
+      <th>V188</th>
+      <th>V189</th>
+      <th>V190</th>
+      <th>V191</th>
+      <th>V192</th>
+      <th>V193</th>
+      <th>V194</th>
+      <th>V195</th>
+      <th>V196</th>
+      <th>V197</th>
+      <th>V198</th>
+      <th>V199</th>
+      <th>V200</th>
+      <th>V201</th>
+      <th>V202</th>
+      <th>V203</th>
+      <th>V204</th>
+      <th>V205</th>
+      <th>V206</th>
+      <th>V207</th>
+      <th>V208</th>
+      <th>V209</th>
+      <th>V210</th>
+      <th>V211</th>
+      <th>V212</th>
+      <th>V213</th>
+      <th>V214</th>
+      <th>V215</th>
+      <th>V216</th>
+      <th>V217</th>
+      <th>V218</th>
+      <th>V219</th>
+      <th>V220</th>
+      <th>V221</th>
+      <th>V222</th>
+      <th>V223</th>
+      <th>V224</th>
+      <th>V225</th>
+      <th>V226</th>
+      <th>V227</th>
+      <th>V228</th>
+      <th>V229</th>
+      <th>V230</th>
+      <th>V231</th>
+      <th>V232</th>
+      <th>V233</th>
+      <th>V234</th>
+      <th>V235</th>
+      <th>V236</th>
+      <th>V237</th>
+      <th>V238</th>
+      <th>V239</th>
+      <th>V240</th>
+      <th>V241</th>
+      <th>V242</th>
+      <th>V243</th>
+      <th>V244</th>
+      <th>V245</th>
+      <th>V246</th>
+      <th>V247</th>
+      <th>V248</th>
+      <th>V249</th>
+      <th>V250</th>
+      <th>V251</th>
+      <th>V252</th>
+      <th>V253</th>
+      <th>V254</th>
+      <th>V255</th>
+      <th>V256</th>
+      <th>V257</th>
+      <th>V258</th>
+      <th>V259</th>
+      <th>V260</th>
+      <th>V261</th>
+      <th>V262</th>
+      <th>V263</th>
+      <th>V264</th>
+      <th>V265</th>
+      <th>V266</th>
+      <th>V267</th>
+      <th>V268</th>
+      <th>V269</th>
+      <th>V270</th>
+      <th>V271</th>
+      <th>V272</th>
+      <th>V273</th>
+      <th>V274</th>
+      <th>V275</th>
+      <th>V276</th>
+      <th>V277</th>
+      <th>V278</th>
+      <th>V279</th>
+      <th>V280</th>
+      <th>V281</th>
+      <th>V282</th>
+      <th>V283</th>
+      <th>V284</th>
+      <th>V285</th>
+      <th>V286</th>
+      <th>V287</th>
+      <th>V288</th>
+      <th>V289</th>
+      <th>V290</th>
+      <th>V291</th>
+      <th>V292</th>
+      <th>V293</th>
+      <th>V294</th>
+      <th>V295</th>
+      <th>V296</th>
+      <th>V297</th>
+      <th>V298</th>
+      <th>V299</th>
+      <th>V300</th>
+      <th>V301</th>
+      <th>V302</th>
+      <th>V303</th>
+      <th>V304</th>
+      <th>V305</th>
+      <th>V306</th>
+      <th>V307</th>
+      <th>V308</th>
+      <th>V309</th>
+      <th>V310</th>
+      <th>V311</th>
+      <th>V312</th>
+      <th>V313</th>
+      <th>V314</th>
+      <th>V315</th>
+      <th>V316</th>
+      <th>V317</th>
+      <th>V318</th>
+      <th>V319</th>
+      <th>V320</th>
+      <th>V321</th>
+      <th>V322</th>
+      <th>V323</th>
+      <th>V324</th>
+      <th>V325</th>
+      <th>V326</th>
+      <th>V327</th>
+      <th>V328</th>
+      <th>V329</th>
+      <th>V330</th>
+      <th>V331</th>
+      <th>V332</th>
+      <th>V333</th>
+      <th>V334</th>
+      <th>V335</th>
+      <th>V336</th>
+      <th>V337</th>
+      <th>V338</th>
+      <th>V339</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>2987000</td>
+      <td>0</td>
+      <td>86400</td>
+      <td>68.5</td>
+      <td>W</td>
+      <td>13926</td>
+      <td>NaN</td>
+      <td>150.0</td>
+      <td>discover</td>
+      <td>142.0</td>
+      <td>credit</td>
+      <td>315.0</td>
+      <td>87.0</td>
+      <td>19.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>2.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>14.0</td>
+      <td>NaN</td>
+      <td>13.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>13.0</td>
+      <td>13.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.0</td>
+      <td>T</td>
+      <td>T</td>
+      <td>T</td>
+      <td>M2</td>
+      <td>F</td>
+      <td>T</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>117.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>117.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>117.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>117.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2987001</td>
+      <td>0</td>
+      <td>86401</td>
+      <td>29.0</td>
+      <td>W</td>
+      <td>2755</td>
+      <td>404.0</td>
+      <td>150.0</td>
+      <td>mastercard</td>
+      <td>102.0</td>
+      <td>credit</td>
+      <td>325.0</td>
+      <td>87.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>gmail.com</td>
+      <td>NaN</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>M0</td>
+      <td>T</td>
+      <td>T</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2987002</td>
+      <td>0</td>
+      <td>86469</td>
+      <td>59.0</td>
+      <td>W</td>
+      <td>4663</td>
+      <td>490.0</td>
+      <td>150.0</td>
+      <td>visa</td>
+      <td>166.0</td>
+      <td>debit</td>
+      <td>330.0</td>
+      <td>87.0</td>
+      <td>287.0</td>
+      <td>NaN</td>
+      <td>outlook.com</td>
+      <td>NaN</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.0</td>
+      <td>315.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>315.0</td>
+      <td>T</td>
+      <td>T</td>
+      <td>T</td>
+      <td>M0</td>
+      <td>F</td>
+      <td>F</td>
+      <td>F</td>
+      <td>F</td>
+      <td>F</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+  </tbody>
+</table>
+</div>
 
 
 
 
 ```python
-#id data
-df_train_id = import_data('./Data/train_identity.csv',nrows=1000)
-df_train_id.head(3);
-df_train_id.shape
+df_test_trans.head(3)
 ```
 
-    Memory usage of dataframe is 0.31 MB --> 0.18 MB (Decreased by 42.7%)
 
 
 
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>TransactionID</th>
+      <th>TransactionDT</th>
+      <th>TransactionAmt</th>
+      <th>ProductCD</th>
+      <th>card1</th>
+      <th>card2</th>
+      <th>card3</th>
+      <th>card4</th>
+      <th>card5</th>
+      <th>card6</th>
+      <th>addr1</th>
+      <th>addr2</th>
+      <th>dist1</th>
+      <th>dist2</th>
+      <th>P_emaildomain</th>
+      <th>R_emaildomain</th>
+      <th>C1</th>
+      <th>C2</th>
+      <th>C3</th>
+      <th>C4</th>
+      <th>C5</th>
+      <th>C6</th>
+      <th>C7</th>
+      <th>C8</th>
+      <th>C9</th>
+      <th>C10</th>
+      <th>C11</th>
+      <th>C12</th>
+      <th>C13</th>
+      <th>C14</th>
+      <th>D1</th>
+      <th>D2</th>
+      <th>D3</th>
+      <th>D4</th>
+      <th>D5</th>
+      <th>D6</th>
+      <th>D7</th>
+      <th>D8</th>
+      <th>D9</th>
+      <th>D10</th>
+      <th>D11</th>
+      <th>D12</th>
+      <th>D13</th>
+      <th>D14</th>
+      <th>D15</th>
+      <th>M1</th>
+      <th>M2</th>
+      <th>M3</th>
+      <th>M4</th>
+      <th>M5</th>
+      <th>M6</th>
+      <th>M7</th>
+      <th>M8</th>
+      <th>M9</th>
+      <th>V1</th>
+      <th>V2</th>
+      <th>V3</th>
+      <th>V4</th>
+      <th>V5</th>
+      <th>V6</th>
+      <th>V7</th>
+      <th>V8</th>
+      <th>V9</th>
+      <th>V10</th>
+      <th>V11</th>
+      <th>V12</th>
+      <th>V13</th>
+      <th>V14</th>
+      <th>V15</th>
+      <th>V16</th>
+      <th>V17</th>
+      <th>V18</th>
+      <th>V19</th>
+      <th>V20</th>
+      <th>V21</th>
+      <th>V22</th>
+      <th>V23</th>
+      <th>V24</th>
+      <th>V25</th>
+      <th>V26</th>
+      <th>V27</th>
+      <th>V28</th>
+      <th>V29</th>
+      <th>V30</th>
+      <th>V31</th>
+      <th>V32</th>
+      <th>V33</th>
+      <th>V34</th>
+      <th>V35</th>
+      <th>V36</th>
+      <th>V37</th>
+      <th>V38</th>
+      <th>V39</th>
+      <th>V40</th>
+      <th>V41</th>
+      <th>V42</th>
+      <th>V43</th>
+      <th>V44</th>
+      <th>V45</th>
+      <th>V46</th>
+      <th>V47</th>
+      <th>V48</th>
+      <th>V49</th>
+      <th>V50</th>
+      <th>V51</th>
+      <th>V52</th>
+      <th>V53</th>
+      <th>V54</th>
+      <th>V55</th>
+      <th>V56</th>
+      <th>V57</th>
+      <th>V58</th>
+      <th>V59</th>
+      <th>V60</th>
+      <th>V61</th>
+      <th>V62</th>
+      <th>V63</th>
+      <th>V64</th>
+      <th>V65</th>
+      <th>V66</th>
+      <th>V67</th>
+      <th>V68</th>
+      <th>V69</th>
+      <th>V70</th>
+      <th>V71</th>
+      <th>V72</th>
+      <th>V73</th>
+      <th>V74</th>
+      <th>V75</th>
+      <th>V76</th>
+      <th>V77</th>
+      <th>V78</th>
+      <th>V79</th>
+      <th>V80</th>
+      <th>V81</th>
+      <th>V82</th>
+      <th>V83</th>
+      <th>V84</th>
+      <th>V85</th>
+      <th>V86</th>
+      <th>V87</th>
+      <th>V88</th>
+      <th>V89</th>
+      <th>V90</th>
+      <th>V91</th>
+      <th>V92</th>
+      <th>V93</th>
+      <th>V94</th>
+      <th>V95</th>
+      <th>V96</th>
+      <th>V97</th>
+      <th>V98</th>
+      <th>V99</th>
+      <th>V100</th>
+      <th>V101</th>
+      <th>V102</th>
+      <th>V103</th>
+      <th>V104</th>
+      <th>V105</th>
+      <th>V106</th>
+      <th>V107</th>
+      <th>V108</th>
+      <th>V109</th>
+      <th>V110</th>
+      <th>V111</th>
+      <th>V112</th>
+      <th>V113</th>
+      <th>V114</th>
+      <th>V115</th>
+      <th>V116</th>
+      <th>V117</th>
+      <th>V118</th>
+      <th>V119</th>
+      <th>V120</th>
+      <th>V121</th>
+      <th>V122</th>
+      <th>V123</th>
+      <th>V124</th>
+      <th>V125</th>
+      <th>V126</th>
+      <th>V127</th>
+      <th>V128</th>
+      <th>V129</th>
+      <th>V130</th>
+      <th>V131</th>
+      <th>V132</th>
+      <th>V133</th>
+      <th>V134</th>
+      <th>V135</th>
+      <th>V136</th>
+      <th>V137</th>
+      <th>V138</th>
+      <th>V139</th>
+      <th>V140</th>
+      <th>V141</th>
+      <th>V142</th>
+      <th>V143</th>
+      <th>V144</th>
+      <th>V145</th>
+      <th>V146</th>
+      <th>V147</th>
+      <th>V148</th>
+      <th>V149</th>
+      <th>V150</th>
+      <th>V151</th>
+      <th>V152</th>
+      <th>V153</th>
+      <th>V154</th>
+      <th>V155</th>
+      <th>V156</th>
+      <th>V157</th>
+      <th>V158</th>
+      <th>V159</th>
+      <th>V160</th>
+      <th>V161</th>
+      <th>V162</th>
+      <th>V163</th>
+      <th>V164</th>
+      <th>V165</th>
+      <th>V166</th>
+      <th>V167</th>
+      <th>V168</th>
+      <th>V169</th>
+      <th>V170</th>
+      <th>V171</th>
+      <th>V172</th>
+      <th>V173</th>
+      <th>V174</th>
+      <th>V175</th>
+      <th>V176</th>
+      <th>V177</th>
+      <th>V178</th>
+      <th>V179</th>
+      <th>V180</th>
+      <th>V181</th>
+      <th>V182</th>
+      <th>V183</th>
+      <th>V184</th>
+      <th>V185</th>
+      <th>V186</th>
+      <th>V187</th>
+      <th>V188</th>
+      <th>V189</th>
+      <th>V190</th>
+      <th>V191</th>
+      <th>V192</th>
+      <th>V193</th>
+      <th>V194</th>
+      <th>V195</th>
+      <th>V196</th>
+      <th>V197</th>
+      <th>V198</th>
+      <th>V199</th>
+      <th>V200</th>
+      <th>V201</th>
+      <th>V202</th>
+      <th>V203</th>
+      <th>V204</th>
+      <th>V205</th>
+      <th>V206</th>
+      <th>V207</th>
+      <th>V208</th>
+      <th>V209</th>
+      <th>V210</th>
+      <th>V211</th>
+      <th>V212</th>
+      <th>V213</th>
+      <th>V214</th>
+      <th>V215</th>
+      <th>V216</th>
+      <th>V217</th>
+      <th>V218</th>
+      <th>V219</th>
+      <th>V220</th>
+      <th>V221</th>
+      <th>V222</th>
+      <th>V223</th>
+      <th>V224</th>
+      <th>V225</th>
+      <th>V226</th>
+      <th>V227</th>
+      <th>V228</th>
+      <th>V229</th>
+      <th>V230</th>
+      <th>V231</th>
+      <th>V232</th>
+      <th>V233</th>
+      <th>V234</th>
+      <th>V235</th>
+      <th>V236</th>
+      <th>V237</th>
+      <th>V238</th>
+      <th>V239</th>
+      <th>V240</th>
+      <th>V241</th>
+      <th>V242</th>
+      <th>V243</th>
+      <th>V244</th>
+      <th>V245</th>
+      <th>V246</th>
+      <th>V247</th>
+      <th>V248</th>
+      <th>V249</th>
+      <th>V250</th>
+      <th>V251</th>
+      <th>V252</th>
+      <th>V253</th>
+      <th>V254</th>
+      <th>V255</th>
+      <th>V256</th>
+      <th>V257</th>
+      <th>V258</th>
+      <th>V259</th>
+      <th>V260</th>
+      <th>V261</th>
+      <th>V262</th>
+      <th>V263</th>
+      <th>V264</th>
+      <th>V265</th>
+      <th>V266</th>
+      <th>V267</th>
+      <th>V268</th>
+      <th>V269</th>
+      <th>V270</th>
+      <th>V271</th>
+      <th>V272</th>
+      <th>V273</th>
+      <th>V274</th>
+      <th>V275</th>
+      <th>V276</th>
+      <th>V277</th>
+      <th>V278</th>
+      <th>V279</th>
+      <th>V280</th>
+      <th>V281</th>
+      <th>V282</th>
+      <th>V283</th>
+      <th>V284</th>
+      <th>V285</th>
+      <th>V286</th>
+      <th>V287</th>
+      <th>V288</th>
+      <th>V289</th>
+      <th>V290</th>
+      <th>V291</th>
+      <th>V292</th>
+      <th>V293</th>
+      <th>V294</th>
+      <th>V295</th>
+      <th>V296</th>
+      <th>V297</th>
+      <th>V298</th>
+      <th>V299</th>
+      <th>V300</th>
+      <th>V301</th>
+      <th>V302</th>
+      <th>V303</th>
+      <th>V304</th>
+      <th>V305</th>
+      <th>V306</th>
+      <th>V307</th>
+      <th>V308</th>
+      <th>V309</th>
+      <th>V310</th>
+      <th>V311</th>
+      <th>V312</th>
+      <th>V313</th>
+      <th>V314</th>
+      <th>V315</th>
+      <th>V316</th>
+      <th>V317</th>
+      <th>V318</th>
+      <th>V319</th>
+      <th>V320</th>
+      <th>V321</th>
+      <th>V322</th>
+      <th>V323</th>
+      <th>V324</th>
+      <th>V325</th>
+      <th>V326</th>
+      <th>V327</th>
+      <th>V328</th>
+      <th>V329</th>
+      <th>V330</th>
+      <th>V331</th>
+      <th>V332</th>
+      <th>V333</th>
+      <th>V334</th>
+      <th>V335</th>
+      <th>V336</th>
+      <th>V337</th>
+      <th>V338</th>
+      <th>V339</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>3663549</td>
+      <td>18403224</td>
+      <td>31.95</td>
+      <td>W</td>
+      <td>10409</td>
+      <td>111.0</td>
+      <td>150.0</td>
+      <td>visa</td>
+      <td>226.0</td>
+      <td>debit</td>
+      <td>170.0</td>
+      <td>87.0</td>
+      <td>1.0</td>
+      <td>NaN</td>
+      <td>gmail.com</td>
+      <td>NaN</td>
+      <td>6.0</td>
+      <td>6.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>3.0</td>
+      <td>4.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>6.0</td>
+      <td>0.0</td>
+      <td>5.0</td>
+      <td>1.0</td>
+      <td>115.0</td>
+      <td>6.0</td>
+      <td>419.0</td>
+      <td>419.0</td>
+      <td>27.0</td>
+      <td>398.0</td>
+      <td>27.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>418.0</td>
+      <td>203.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>409.0</td>
+      <td>T</td>
+      <td>T</td>
+      <td>F</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>F</td>
+      <td>T</td>
+      <td>T</td>
+      <td>T</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>47.950001</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>47.950001</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>47.950001</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>47.950001</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>3663550</td>
+      <td>18403263</td>
+      <td>49.00</td>
+      <td>W</td>
+      <td>4272</td>
+      <td>111.0</td>
+      <td>150.0</td>
+      <td>visa</td>
+      <td>226.0</td>
+      <td>debit</td>
+      <td>299.0</td>
+      <td>87.0</td>
+      <td>4.0</td>
+      <td>NaN</td>
+      <td>aol.com</td>
+      <td>NaN</td>
+      <td>3.0</td>
+      <td>2.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>2.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>12.0</td>
+      <td>2.0</td>
+      <td>149.0</td>
+      <td>149.0</td>
+      <td>7.0</td>
+      <td>634.0</td>
+      <td>7.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>231.0</td>
+      <td>634.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>634.0</td>
+      <td>T</td>
+      <td>F</td>
+      <td>F</td>
+      <td>M0</td>
+      <td>NaN</td>
+      <td>F</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>4.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>4.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>280.000000</td>
+      <td>77.0</td>
+      <td>0.0</td>
+      <td>280.000000</td>
+      <td>77.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>4.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>280.000000</td>
+      <td>77.0</td>
+      <td>0.0</td>
+      <td>280.000000</td>
+      <td>0.0</td>
+      <td>77.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3663551</td>
+      <td>18403310</td>
+      <td>171.00</td>
+      <td>W</td>
+      <td>4476</td>
+      <td>574.0</td>
+      <td>150.0</td>
+      <td>visa</td>
+      <td>226.0</td>
+      <td>debit</td>
+      <td>472.0</td>
+      <td>87.0</td>
+      <td>2635.0</td>
+      <td>NaN</td>
+      <td>hotmail.com</td>
+      <td>NaN</td>
+      <td>2.0</td>
+      <td>2.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>5.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>4.0</td>
+      <td>0.0</td>
+      <td>2.0</td>
+      <td>0.0</td>
+      <td>22.0</td>
+      <td>2.0</td>
+      <td>137.0</td>
+      <td>137.0</td>
+      <td>10.0</td>
+      <td>97.0</td>
+      <td>10.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>136.0</td>
+      <td>136.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>97.0</td>
+      <td>T</td>
+      <td>T</td>
+      <td>F</td>
+      <td>M0</td>
+      <td>F</td>
+      <td>F</td>
+      <td>F</td>
+      <td>F</td>
+      <td>F</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>2.0</td>
+      <td>2.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>2.0</td>
+      <td>1.0</td>
+      <td>2.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>2.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>5.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>3.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>2.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>968.000000</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>705.000000</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>263.0</td>
+      <td>0.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>4.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>2.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>2.0</td>
+      <td>0.0</td>
+      <td>2.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>1321.000000</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1058.000000</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>263.0</td>
+      <td>0.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+  </tbody>
+</table>
+</div>
 
 
-    (1000, 41)
 
-
-
-## Join transactions and ids
-
-All TransactionID's from df_train_id are present in df_train_trans<br>
-BUT 76% of all TransactionID's of df_train_trans are missing from df_train_id<br>
-$\implies$ perform a LEFT merge of df_train_id on df_train_trans
+### Transactions
 
 
 ```python
-# df_all=pd.merge(df_train_trans,df_train_id,on='TransactionID',how='left')
-# df_all.shape
+trans = TableDescriptor(df_train_trans,'Transaction_df','isFraud')
 ```
 
-
-```python
-df_all=df_train_trans
-```
-
-
-```python
-all_vars = TableDescriptor(df_all,'All_data','isFraud')
-```
-
-# 1. Data Cleaning
-
-### A. Filter features by NaNs_rate
-
-
-```python
-#Select features with low NaN rate
-low_nan_vars = getCompletedVars(all_vars,nans_rate_cut_off=0.1)
-```
-
-    Selected features: 114/394
+    100%|██████████| 394/394 [00:13<00:00, 34.89it/s]
 
 
 
 ```python
-cols_to_drop = [var.name for var in all_vars.variables if var not in low_nan_vars]
-df_all = df_all.drop(cols_to_drop,axis=1)
+len(trans.variables)
 ```
 
-### B. Fill NaNs
 
-Numerical features: fill NaNs with mean value <br>
-Categorical features: fill NaNs with most frequent value
+
+
+    394
+
+
+
+# Join transactions and ids
+
+## NaNs_rate
 
 
 ```python
-#split data to numerical/categorical
-numerical_vars,categorical_vars= numerical_categorical_split(low_nan_vars,min_categories=30)
+low_nan_vars=getCompletedVars(trans,nans_rate_cut_off = 0.1)
 ```
 
-    No of numerical features: 56
-    No of categorical features: 58
-
-
-
-```python
-fill_nans(df_all,numerical_vars,feat_type='numerical')
-fill_nans(df_all,categorical_vars,feat_type='categorical')
-```
-
-
-
-
-    "NaNs have been filled in with column's most frequent value."
-
+    Selected features: 112/394
 
 
 
 ```python
-print_null_cols(df_all)
+numerical_vars,categorical_vars= numerical_categorical_split(low_nan_vars,min_categories=300)
 ```
 
+    No of numerical features: 57
+    No of categorical features: 55
 
 
-
-    'No null columns.'
-
-
-
-# 2. Feature Engineering
-
-### A. Datetime Features
+# Clustering imputation method
 
 
 ```python
-period_feats=addDatetimeFeats(df_all)
-```
-
-    Datetime-like features added to dataframe:
-
-    ['month', 'week', 'yearday', 'hour', 'weekday', 'day']
-
-
-
-```python
-# TransactionDT col is redundant
-df_all = df_all.drop('TransactionDT',axis=1)
-```
-
-### B. Interaction Features
-
-
-```python
-#B.1 Add Interaction Features by ADDING the values of card_ and addr_ columns
-card_addr_interactions = addCardAddressInteractionFeats(df_all)
-```
-
-    Interaction features added to dataframe:
-
-    ['card12', 'card1235', 'card1235_addr12']
-
-
-
-```python
-#card_addr_feats = card_addr_interactions + ['card1','card2','card3','card5']
-card_addr_feats = ['card12']
+num_cols = [var.name for var in numerical_vars if var.name not in ['TransactionID','isFraud']]
+cat_cols = [var.name for var in categorical_vars if var.name not in ['TransactionID','isFraud']]
+cols = num_cols + cat_cols
 ```
 
 
 ```python
-#B.2 Add interaction features by ADDING the values of card_addr_feats and period_feats
-#   and computing value frequencies
-addDatetimeInteractionFeats(df_all, cols=card_addr_feats, period_cols=period_feats);
-```
+all_cols = ['TransactionID']+ cols
 
-    Interaction features added to dataframe: 6
-
-    ['card12_month', 'card12_week', 'card12_yearday', 'card12_hour', 'card12_weekday', 'card12_day']
-
-
-### C. Aggregated Features
-
-
-```python
-# Add aggregated features by grouping-by card_addr_feats and computing the mean & STD of 'TransactionAmt'
-addAggTransAmtFeats(df_all,cols=card_addr_feats);
-```
-
-    Aggregated TransactionAmt features added to dataframe: 2
-
-    ['TransAmt_card12_mean', 'TransAmt_card12_std']
-
-
-### D. Indicator/Frequency Features
-
-
-```python
-try_cols = card_addr_feats + \
-        ['C1','C2','C3','C4','C5','C6','C7','C8','C9','C10','C11','C12','C13','C14',
-        'D1','D2','D3','D4','D5','D6','D7','D8',
-        'addr1','addr2',
-        'dist1','dist2',
-        'P_emaildomain', 'R_emaildomain',
-        'DeviceInfo','DeviceType',
-        'id_30','id_33']
+df_train_test = df_train_trans[all_cols].append(df_test_trans[all_cols],
+                                              ignore_index=True)
 ```
 
 
 ```python
-# Add indicator features by computing the value frequencies of try_cols
-addFrequencyFeats(df_all,cols=try_cols);
-```
-
-    Frequency features added to dataframe: 18
-
-    ['card12_freq', 'C1_freq', 'C2_freq', 'C3_freq', 'C4_freq', 'C5_freq', 'C6_freq', 'C7_freq', 'C8_freq', 'C9_freq', 'C10_freq', 'C11_freq', 'C12_freq', 'C13_freq', 'C14_freq', 'D1_freq', 'addr1_freq', 'addr2_freq']
-
-
-
-```python
-print_null_cols(df_all)
+df_train_test.shape
 ```
 
 
 
 
-    'No null columns.'
-
-
-
-# 3. Preprocessing and Feature Selection
-
-
-```python
-all_vars = TableDescriptor(df_all,'All_data','isFraud')
-```
-
-```python
-numerical_vars,categorical_vars= numerical_categorical_split(all_vars.variables,min_categories=30)
-```
-
-    No of numerical features: 69
-    No of categorical features: 75
-
-
-## A. Filter Features by Correlation to target
-
-
-```python
-#numerical_vars = getCorrelatedFeatures(numerical_vars,corr_cut_off=0.000)
-```
-
-
-```python
-categorical_vars = getCorrelatedFeatures(categorical_vars,corr_cut_off=0.1)
-```
-
-    Selected features: 8/75
-
-
-## B. Convert categorical data to Dummies or Codes
-
-
-```python
-categorical_cols = [var.name for var in categorical_vars if var.name not in ['TransactionID','isFraud'] ]
-numerical_vars = [var for var in numerical_vars if var.name!= 'TransactionDT']
-all_cols = [var.name for var in numerical_vars] + [var.name for var in categorical_vars]
-```
-
-
-```python
-df_all=to_categorical(df=df_all[all_cols],cat_cols=categorical_cols,how='dummies')
-df_all.shape
-```
-
-
-
-
-    (20000, 16552)
+    (1097231, 111)
 
 
 
 
 ```python
-print_null_cols(df_all)
+#save dataframe to save memory
+df_train_test.to_csv('./Data/df_train_test.csv',index=False)
 ```
 
-
-
-
-    'No null columns.'
-
-
-
-# 4. Stratified Split training and validation data
-
-
-```python
-x_cols = [col for col in df_all.columns.tolist() if col not in ['TransactionID','isFraud']]
-y_col = 'isFraud'
-```
-
-
-```python
-#define X and y
-
-X, y = df_all.loc[:,x_cols].values, df_all.loc[:,y_col].values
-
-X_train, X_test, y_train, y_test = getStratifiedTrainTestSplit(X,y,frac=0.2,n_splits=1,
-                                                                random_state=0)
-```
-
-
-```python
-#df's shapes
-
-for i in [X_train, X_test, y_train, y_test]:
-    print(i.shape)
-```
-
-    (16000, 16550)
-    (4000, 16550)
-    (16000,)
-    (4000,)
-
-
-## Save analyzed data
+# Save categorical, numerical, and all columns
 
 
 ```python
@@ -381,23 +3361,15 @@ from pickleObjects import *
 
 ```python
 path = './Data/'
-
-dumpObjects(X_train,path+'X_train')
-dumpObjects(y_train,path+'y_train')
-dumpObjects(X_test,path+'X_test')
-dumpObjects(y_test,path+'y_test')
 ```
-
-    Object saved!
-    Object saved!
-    Object saved!
-    Object saved!
-
-
-### PCA
 
 
 ```python
-# X_train = np.hstack((X_train,PCAT.rec_error(X_train_scaled).reshape(-1,1)))
-# X_test = np.hstack((X_test,PCAT.rec_error(X_test_scaled).reshape(-1,1)))
+dumpObjects(cat_cols,path+'cat_cols')
+dumpObjects(num_cols,path+'num_cols')
+dumpObjects(cols,path+'cols')
 ```
+
+    Object saved!
+    Object saved!
+    Object saved!
