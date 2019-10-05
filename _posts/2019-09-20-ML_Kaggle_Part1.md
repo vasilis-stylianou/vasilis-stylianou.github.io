@@ -40,11 +40,11 @@ pd.set_option('display.max_columns', 500)
 pd.set_option('display.width', 1000)
 ```
 
-#Utility script for data cleaning and preprocessing
+## Utility script for data cleaning and preprocessing
 ```python
 from fraud_pre_proc import *
 ```
-We shall use this script to declare new classes and methods to keep our code clean and neat. In particular, it'll be very useful to create a class called ```Variable``` to capture the statistical properties of each feature.
+We shall use this script to declare new classes and methods to keep our code clean and neat. In particular, it'll be very useful to create a class called ```Variable``` to capture the statistical properties of each feature (the terms features/columns/variables are used interchangeably in this post).
 
 ```python
 class Variable:
@@ -79,21 +79,37 @@ class Variable:
             except:
                 self.corr = 'Invalid variable'
                 pass
+```
+Having created the ```Variable``` class, we can now build upon it and create a class ```TableDescriptor``` to create a list of```Variable``` objects associated to the columns of an input dataframe.
 
-```  
+```python
+class TableDescriptor:
+    """Class to automatically describe every variable in a df"""
 
+    def __init__(self,df,df_name,label_name=None):
+        """Method to intiate object.
+        Inputs:
+            df: pandas dataframe
+            df_name: string with df's col_name
+            label_name: series name
+        """
+        if label_name == None:
+            self.label = None
+        else:
+            self.label = df[label_name]
+        self.variables = [Variable(df[col],col,
+                                    label=self.label) for col in tqdm(df.columns)]
+```
 
 # Import data
 
 ## i) Transactions
 
 ```python
-#trans data
-#df_train_trans = import_data('./Data/train_transaction.csv',nrows=1000)
-df_train_trans = pd.import_data('./Data/train_transaction.csv')
-df_test_trans = pd.import_data('./Data/test_transaction.csv')
+df_train_trans = import_data('./Data/train_transaction.csv')
+df_test_trans = import_data('./Data/test_transaction.csv')
 ```
-
+Here ```import_data``` is a method in ```fraud_pre_proc``` which creates a pandas dataframe and optimizes its memory usage.
 
 ```python
 df_train_trans.head(3)
