@@ -1803,25 +1803,18 @@ df_train_test.shape
     (1097231, 111)
 
 
-
-
-```python
-#save dataframe to save memory
-df_train_test.to_csv('./Data/df_train_test.csv',index=False)
-```
-
 ## Some Technical Prerequisites
 ```python
 #numpy array of nulls
-bool_nulls_train = df_train_trans.loc[:,cat_cols].isnull()
+bool_nulls_train = df_train_test.loc[:,cat_cols].isnull()
 
 #replacing nulls with 'NaN' so that it can be used with the encoder
 for col in cat_cols:
-    df_train_trans[col] = df_train_trans[col].astype('str')
+    df_train_test[col] = df_train_test[col].astype('str')
 
-df_train_trans_cats = df_train_trans.loc[:,cat_cols].copy()
-df_train_trans_cats[df_train_trans_cats.isnull()] = 'NaN'
-df_train_trans.loc[:,cat_cols] = df_train_trans_cats.copy()
+df_train_test_cats = df_train_test.loc[:,cat_cols].copy()
+df_train_test_cats[df_train_test_cats.isnull()] = 'NaN'
+df_train_test.loc[:,cat_cols] = df_train_test_cats.copy()
 ```
 ```python
 from sklearn.preprocessing import LabelEncoder
@@ -1830,17 +1823,17 @@ from sklearn.preprocessing import LabelEncoder
 
 lb_make = LabelEncoder()
 for col in cat_cols:
-    lb_make.fit(df_train_trans[col].dropna())
-    df_train_trans[col] = lb_make.transform(df_train_trans[col])
+    lb_make.fit(df_train_test[col].dropna())
+    df_train_test[col] = lb_make.transform(df_train_test[col])
 
 #replacing categorical varibales with 'NaN' value to nulls
-df_train_trans_cats = df_train_trans.loc[:,cat_cols].copy()
-df_train_trans_cats[bool_nulls_train] = np.nan
-df_train_trans.loc[:,cat_cols] = df_train_trans_cats.copy()
+df_train_test_cats = df_train_test.loc[:,cat_cols].copy()
+df_train_test_cats[bool_nulls_train] = np.nan
+df_train_test.loc[:,cat_cols] = df_train_test_cats.copy()
 ```
 
 ```python
-df_train_trans[cols].head(3)
+df_train_test[cols].head(3)
 ```
 
 
@@ -2331,20 +2324,20 @@ from mcip import *
 
 
 ```python
-temp_df = pd.DataFrame(columns=df_train_trans.columns)
+temp_df = pd.DataFrame(columns=df_train_test.columns)
 
-for chunk in tqdm_notebook(np.array_split(df_train_trans, 1000)):
-    df_test_trans_compl = replaceMissValMCIP(df_train_trans,
+for chunk in tqdm_notebook(np.array_split(df_train_test, 1000)):
+    df_trans_compl = replaceMissValMCIP(df_train_test,
                                           chunk.reset_index(drop=True),
                                           cols=cols,frac=0.001,
                                           categorical=cat_cols,
                                           continuous=num_cols)
 
-    temp_df = temp_df.append(df_test_trans_compl,ignore_index=True)
+    temp_df = temp_df.append(df_trans_compl,ignore_index=True)
 ```
 ```python
 #checking if nulls have been placed
-df_train_trans[cols].isnull().sum()[:5]
+df_train_test[cols].isnull().sum()[:5]
 ```
 
 
@@ -2860,15 +2853,9 @@ temp_df[cols].head(3)
 </div>
 
 ```python
-#replace temp_df with df_train_trans
-df_train_trans = temp_df
 
-# Save imputed data
-
-
-```python
-x[['TransactionID']+cols+['pca_error']].to_csv('./Data/df_trans_imputed.csv',index=False)
-```
+#replace temp_df with df_train_test
+df_train_test = temp_df
 
 
 
@@ -3093,7 +3080,7 @@ df_train_ids.head(3)
 
 
 ```python
-trans = TableDescriptor(df_train_ids,'Transaction_df','isFraud')
+ids = TableDescriptor(df_train_ids,'Transaction_df','isFraud')
 ```
 
 
@@ -3116,7 +3103,7 @@ len(trans.variables)
 ## NaNs_rate
 
 ```python
-low_nan_vars=getCompletedVars(trans,nans_rate_cut_off = 0.025)
+low_nan_vars=getCompletedVars(ids,nans_rate_cut_off = 0.025)
 ```
 
     Selected features: 14/42
@@ -3134,20 +3121,20 @@ numerical_vars,categorical_vars= numerical_categorical_split(low_nan_vars,min_ca
 
 
 ```python
-cols = [var.name for var in low_nan_vars if var.name != 'isFraud']
+cols_ids = [var.name for var in low_nan_vars if var.name != 'isFraud']
 ```
 
 
 ```python
-all_cols = ['TransactionID']+ cols
+all_cols = ['TransactionID']+ cols_ids
 
-df_train_test = df_train_ids[all_cols].append(df_test_ids[all_cols],
+df_train_test_ids = df_train_ids[all_cols].append(df_test_ids[all_cols],
                                               ignore_index=True)
 ```
 
 
 ```python
-df_train_test.shape
+df_train_test_ids.shape
 ```
 
 
@@ -3157,32 +3144,7 @@ df_train_test.shape
 
 
 
-
 ```python
-#save dataframe to save memory
-df_train_test.to_csv('./Data/df_train_test_ids.csv',index=False)
+num_cols_ids = [var.name for var in numerical_vars if var.name not in ['TransactionID','isFraud']]
+cat_cols_ids = [var.name for var in categorical_vars if var.name not in ['TransactionID','isFraud']]
 ```
-
-## Save categorical, numerical, and all columns
-
-
-```python
-path = './Data/'
-```
-
-
-```python
-num_cols = [var.name for var in numerical_vars if var.name not in ['TransactionID','isFraud']]
-cat_cols = [var.name for var in categorical_vars if var.name not in ['TransactionID','isFraud']]
-```
-
-
-```python
-dumpObjects(cat_cols,path+'cat_cols_ids')
-dumpObjects(num_cols,path+'num_cols_ids')
-dumpObjects(cols,path+'cols_ids')
-```
-
-    Object saved!
-    Object saved!
-    Object saved!
