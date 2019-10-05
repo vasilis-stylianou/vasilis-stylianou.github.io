@@ -1775,8 +1775,7 @@ numerical_vars,categorical_vars= numerical_categorical_split(low_nan_vars,min_ca
 Evidently, the data consists of a lot of missing values and in order to proceed we need to adopt an imputation method to fill these values. A quick way to achieve this would be to fill the missing values of each numerical/categorical column with the average/most frequent value of the column, excluding all NaNs.
 A more sophisticated way would be to find for each row with missing values, a cluster of the most similar rows, compute each column's average or most frequent value (restricted to the cluster's rows), and then impute the missing values of the row under consideration.
 
-The authors of this [paper](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6371325/) has developed such a methodology - called Multiple Clustering Imputation Methodology (MCIM) - and published their algorithm [here](https://github.com/panas89/multipleClusteringImputation).
-
+The authors of this [paper](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6371325/) has developed such a methodology - called Multiple Clustering Imputation Methodology (MCIM) - and published their algorithm [here](https://github.com/panas89/multipleClusteringImputation). To increase the number of available non-NaN data we shall concatenate the train dataset with the test one.
 
 
 ```python
@@ -1834,7 +1833,625 @@ dumpObjects(cols,path+'cols')
     Object saved!
     Object saved!
 
+```python
+df_train_trans[cols].isnull().sum()[:5]
+```
 
+
+
+
+    TransactionDT         0
+    TransactionAmt        0
+    card1                 0
+    card2             17587
+    C1                    3
+    dtype: int64
+
+
+
+
+```python
+#numpy array of nulls
+bool_nulls_train = df_train_trans.loc[:,cat_cols].isnull()
+```
+
+
+```python
+#making cat vars to string to be saved as objects
+for col in cat_cols:
+    df_train_trans[col] = [str(i) for i in df_train_trans[col]]
+```
+
+
+```python
+#replacing nulls with 'NaN' so that it can be used with the encoder
+df_train_trans_cats = df_train_trans.loc[:,cat_cols].copy()
+df_train_trans_cats[df_train_trans_cats.isnull()] = 'NaN'
+df_train_trans.loc[:,cat_cols] = df_train_trans_cats.copy()
+```
+
+
+```python
+#dataframe first 5 cols missing values counts, replaced so all zeros
+df_train_trans.loc[:,cat_cols].isnull().sum()[:5]
+```
+
+
+
+
+    ProductCD    0
+    card3        0
+    card4        0
+    card5        0
+    card6        0
+    dtype: int64
+
+
+
+
+```python
+#checking if bull numpy array also matches nulls
+np.sum(bool_nulls_train,axis=0)[:5]
+```
+
+
+
+
+    ProductCD       0
+    card3        4567
+    card4        4663
+    card5        8806
+    card6        4578
+    dtype: int64
+
+
+
+## Label encoder
+
+- This is done simultaneousl on training and testing
+
+
+```python
+from sklearn.preprocessing import LabelEncoder
+
+#label encoding strings of categorical variables
+
+lb_make = LabelEncoder()
+for col in cat_cols:
+    lb_make.fit(df_train_trans[col].dropna())
+    df_train_trans[col] = lb_make.transform(df_train_trans[col])
+```
+
+
+```python
+#replacing categorical varibales with 'NaN' value to nulls
+df_train_trans_cats = df_train_trans.loc[:,cat_cols].copy()
+df_train_trans_cats[bool_nulls_train] = np.nan
+df_train_trans.loc[:,cat_cols] = df_train_trans_cats.copy()
+```
+
+
+```python
+#checking if nulls have been placed
+df_train_trans.loc[:,cols].isnull().sum()[:5]
+```
+
+
+
+
+    TransactionDT         0
+    TransactionAmt        0
+    card1                 0
+    card2             17587
+    C1                    3
+    dtype: int64
+
+
+
+
+```python
+df_train_trans[cols].head(3)
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>TransactionDT</th>
+      <th>TransactionAmt</th>
+      <th>card1</th>
+      <th>card2</th>
+      <th>C1</th>
+      <th>C2</th>
+      <th>C4</th>
+      <th>C5</th>
+      <th>C6</th>
+      <th>C7</th>
+      <th>C8</th>
+      <th>C10</th>
+      <th>C11</th>
+      <th>C12</th>
+      <th>C13</th>
+      <th>C14</th>
+      <th>D1</th>
+      <th>V95</th>
+      <th>V96</th>
+      <th>V97</th>
+      <th>V101</th>
+      <th>V102</th>
+      <th>V103</th>
+      <th>V126</th>
+      <th>V127</th>
+      <th>V128</th>
+      <th>V129</th>
+      <th>V130</th>
+      <th>V131</th>
+      <th>V132</th>
+      <th>V133</th>
+      <th>V134</th>
+      <th>V135</th>
+      <th>V136</th>
+      <th>V137</th>
+      <th>V279</th>
+      <th>V280</th>
+      <th>V293</th>
+      <th>V294</th>
+      <th>V295</th>
+      <th>V306</th>
+      <th>V307</th>
+      <th>V308</th>
+      <th>V309</th>
+      <th>V310</th>
+      <th>V311</th>
+      <th>V312</th>
+      <th>V313</th>
+      <th>V314</th>
+      <th>V315</th>
+      <th>V316</th>
+      <th>V317</th>
+      <th>V318</th>
+      <th>V319</th>
+      <th>V320</th>
+      <th>V321</th>
+      <th>ProductCD</th>
+      <th>card3</th>
+      <th>card4</th>
+      <th>card5</th>
+      <th>card6</th>
+      <th>C3</th>
+      <th>C9</th>
+      <th>V98</th>
+      <th>V99</th>
+      <th>V100</th>
+      <th>V104</th>
+      <th>V105</th>
+      <th>V106</th>
+      <th>V107</th>
+      <th>V108</th>
+      <th>V109</th>
+      <th>V110</th>
+      <th>V111</th>
+      <th>V112</th>
+      <th>V113</th>
+      <th>V114</th>
+      <th>V115</th>
+      <th>V116</th>
+      <th>V117</th>
+      <th>V118</th>
+      <th>V119</th>
+      <th>V120</th>
+      <th>V121</th>
+      <th>V122</th>
+      <th>V123</th>
+      <th>V124</th>
+      <th>V125</th>
+      <th>V281</th>
+      <th>V282</th>
+      <th>V283</th>
+      <th>V284</th>
+      <th>V285</th>
+      <th>V286</th>
+      <th>V287</th>
+      <th>V288</th>
+      <th>V289</th>
+      <th>V290</th>
+      <th>V291</th>
+      <th>V292</th>
+      <th>V296</th>
+      <th>V297</th>
+      <th>V298</th>
+      <th>V299</th>
+      <th>V300</th>
+      <th>V301</th>
+      <th>V302</th>
+      <th>V303</th>
+      <th>V304</th>
+      <th>V305</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>86400</td>
+      <td>68.5</td>
+      <td>13926</td>
+      <td>NaN</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>2.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>14.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>117.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>117.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>117.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>117.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>4</td>
+      <td>50.0</td>
+      <td>1.0</td>
+      <td>42.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>86401</td>
+      <td>29.0</td>
+      <td>2755</td>
+      <td>404.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>4</td>
+      <td>50.0</td>
+      <td>2.0</td>
+      <td>2.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>86469</td>
+      <td>59.0</td>
+      <td>4663</td>
+      <td>490.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>4</td>
+      <td>50.0</td>
+      <td>4.0</td>
+      <td>66.0</td>
+      <td>2.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+## Starting the imputation process
+
+
+```python
+from mcip import *
+```
+
+
+```python
+x = pd.DataFrame(columns=df_train_trans.columns)
+
+for chunk in tqdm_notebook(np.array_split(df_train_trans, 1000)):
+    df_test_trans_compl = replaceMissValMCIP(df_train_trans,
+                                          chunk.reset_index(drop=True),
+                                          cols=cols,frac=0.001,
+                                          categorical=cat_cols,
+                                          continuous=num_cols)
+
+    x = x.append(df_test_trans_compl,ignore_index=True)
+```
 
 ## ii) IDs
 
