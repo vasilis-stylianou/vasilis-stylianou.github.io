@@ -3114,32 +3114,27 @@ numerical_vars,categorical_vars= numerical_categorical_split(low_nan_vars,min_ca
     No of categorical features: 11
 
 
-## Clustering Imputation Method
-
-
 ```python
 cols_ids = [var.name for var in low_nan_vars if var.name != 'isFraud']
-```
-
-
-```python
 all_cols = ['TransactionID']+ cols_ids
 df_train_test_ids = df_train_ids[all_cols].append(df_test_ids[all_cols], ignore_index=True)
-```
-
-
-```python
 df_train_test_ids.shape
 ```
 
-
-
-
     (286140, 14)
-
 
 
 ```python
 num_cols_ids = [var.name for var in numerical_vars if var.name not in ['TransactionID','isFraud']]
 cat_cols_ids = [var.name for var in categorical_vars if var.name not in ['TransactionID','isFraud']]
 ```
+
+## Join Transactions & IDs
+
+All TransactionID's from df_train_id are present in df_train_trans BUT ~76% of all TransactionID's of df_train_trans are missing from df_train_id.
+
+```python
+df_all=pd.merge(df_train_test,df_train_test_id,on='TransactionID',how='left')
+df_all.shape
+```
+## Clustering Imputation Method
