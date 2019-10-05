@@ -13,15 +13,14 @@ The following work was done during the Kaggle competition -  [IEEE-CIS Fraud Det
 and were asked to predict the probability of a card transaction being fraudulent. Submissions were evaluated on area under the ROC curve between the predicted probability (of the test set) and the observed target.
 
 # Index:
-I divided my work to four steps:
 1. Data Cleaning
 2. Feature Engineering
 3. Feature Selection and Preprocessing
 4. Model Training/Evaluation/Selection
 
-In this post I cover steps 1-3.
+In this post I discuss steps 1-3.
 
-Note: During the completion of this project my work was distributed among a number of python scripts and jupyter notebooks. In this presentation I have concatenated everything together but for the sake of brevity I left out some of the utility scripts and I refer the reader to my github for more details.
+Note: By the completion of this project the code was distributed among a number of python scripts and jupyter notebooks. In this post I have concatenated everything together but for the sake of brevity I left out some of the utility scripts, and I refer the reader to my github repository for more details.
 
 # Step 1: Data Cleaning
 
@@ -1775,8 +1774,9 @@ numerical_vars,categorical_vars= numerical_categorical_split(low_nan_vars,min_ca
 Evidently, the data consists of a lot of missing values and in order to proceed we need to adopt an imputation method to fill these values. A quick way to achieve this would be to fill the missing values of each numerical/categorical column with the average/most frequent value of the column, excluding all NaNs.
 A more sophisticated way would be to find for each row with missing values, a cluster of the most similar rows, compute each column's average or most frequent value (restricted to the cluster's rows), and then impute the missing values of the row under consideration.
 
-The authors of this [paper](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6371325/) has developed such a methodology - called Multiple Clustering Imputation Methodology (MCIM) - and published their algorithm [here](https://github.com/panas89/multipleClusteringImputation). To increase the number of available non-NaN data we shall concatenate the train dataset with the test one.
+The authors of this [paper](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6371325/) has developed such a methodology - called Multiple Clustering Imputation Methodology (MCIM) - and published their algorithm [here](https://github.com/panas89/multipleClusteringImputation). The code has been appropriately adapted and saved in our github repository as ```mcip.py```.
 
+Before we begin the imputation let us increase the number of available non-NaN data by concatenating the train and test sets together.
 
 ```python
 num_cols = [var.name for var in numerical_vars if var.name not in ['TransactionID','isFraud']]
@@ -1809,30 +1809,6 @@ df_train_test.shape
 #save dataframe to save memory
 df_train_test.to_csv('./Data/df_train_test.csv',index=False)
 ```
-
-## Save categorical, numerical, and all columns
-
-
-```python
-from pickleObjects import *
-```
-
-
-```python
-path = './Data/'
-```
-
-
-```python
-dumpObjects(cat_cols,path+'cat_cols')
-dumpObjects(num_cols,path+'num_cols')
-dumpObjects(cols,path+'cols')
-```
-
-    Object saved!
-    Object saved!
-    Object saved!
-
 
 ## Some Technical Prerequisites
 ```python
@@ -2346,7 +2322,7 @@ df_train_trans[cols].head(3)
 
 
 
-## Starting the imputation process
+## Starting The Imputation Process
 
 
 ```python
@@ -2355,7 +2331,7 @@ from mcip import *
 
 
 ```python
-x = pd.DataFrame(columns=df_train_trans.columns)
+temp_df = pd.DataFrame(columns=df_train_trans.columns)
 
 for chunk in tqdm_notebook(np.array_split(df_train_trans, 1000)):
     df_test_trans_compl = replaceMissValMCIP(df_train_trans,
@@ -2364,7 +2340,7 @@ for chunk in tqdm_notebook(np.array_split(df_train_trans, 1000)):
                                           categorical=cat_cols,
                                           continuous=num_cols)
 
-    x = x.append(df_test_trans_compl,ignore_index=True)
+    temp_df = temp_df.append(df_test_trans_compl,ignore_index=True)
 ```
 ```python
 #checking if nulls have been placed
@@ -2386,7 +2362,7 @@ df_train_trans[cols].isnull().sum()[:5]
 
 ```python
 #checking if cols were imputed
-x[cols].isnull().sum()[:5]
+temp_df[cols].isnull().sum()[:5]
 ```
 
 
@@ -2403,7 +2379,7 @@ x[cols].isnull().sum()[:5]
 
 
 ```python
-x[cols].head(3)
+temp_df[cols].head(3)
 ```
 
 
@@ -2883,29 +2859,9 @@ x[cols].head(3)
 </table>
 </div>
 
-
-
-# PCA
-
-
 ```python
-# # feature scalingmodel.best_performance
-
-X_train = x[num_cols].values
-
-from sklearn.preprocessing import StandardScaler
-scaler = StandardScaler().fit(X_train)
-
-X_train_scaled=scaler.transform(X_train)
-
-
-PCAT = PCATransformer(X_train_scaled)
-```
-
-
-```python
-x['pca_error'] = PCAT.rec_error(X_train_scaled).reshape(-1,1)
-```
+#replace temp_df with df_train_trans
+df_train_trans = temp_df
 
 # Save imputed data
 
@@ -2914,33 +2870,12 @@ x['pca_error'] = PCAT.rec_error(X_train_scaled).reshape(-1,1)
 x[['TransactionID']+cols+['pca_error']].to_csv('./Data/df_trans_imputed.csv',index=False)
 ```
 
-# Pickle variables
-
-
-```python
-from pickleObjects import *
-```
-
-
-```python
-path = './Data/'
-
-dumpObjects(num_cols+['pca_error'],path+'num_cols')
-dumpObjects(cat_cols,path+'cat_cols')
-dumpObjects(cols+['pca_error'],path+'cols')
-```
-
-    Object saved!
-    Object saved!
-    Object saved!
 
 
 ## ii) IDs
 
 
 ```python
-#trans data
-#df_train_trans = import_data('./Data/train_transaction.csv',nrows=1000)
 df_train_ids = pd.import_data('./Data/train_identity.csv')
 df_test_ids = pd.import_data('./Data/test_identity.csv')
 ```
@@ -3157,218 +3092,6 @@ df_train_ids.head(3)
 </div>
 
 
-
-
-```python
-df_test_ids.head(3)
-```
-
-
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>TransactionID</th>
-      <th>id_01</th>
-      <th>id_02</th>
-      <th>id_03</th>
-      <th>id_04</th>
-      <th>id_05</th>
-      <th>id_06</th>
-      <th>id_07</th>
-      <th>id_08</th>
-      <th>id_09</th>
-      <th>id_10</th>
-      <th>id_11</th>
-      <th>id_12</th>
-      <th>id_13</th>
-      <th>id_14</th>
-      <th>id_15</th>
-      <th>id_16</th>
-      <th>id_17</th>
-      <th>id_18</th>
-      <th>id_19</th>
-      <th>id_20</th>
-      <th>id_21</th>
-      <th>id_22</th>
-      <th>id_23</th>
-      <th>id_24</th>
-      <th>id_25</th>
-      <th>id_26</th>
-      <th>id_27</th>
-      <th>id_28</th>
-      <th>id_29</th>
-      <th>id_30</th>
-      <th>id_31</th>
-      <th>id_32</th>
-      <th>id_33</th>
-      <th>id_34</th>
-      <th>id_35</th>
-      <th>id_36</th>
-      <th>id_37</th>
-      <th>id_38</th>
-      <th>DeviceType</th>
-      <th>DeviceInfo</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>3663586</td>
-      <td>-45.0</td>
-      <td>280290.0</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>100.0</td>
-      <td>NotFound</td>
-      <td>27.0</td>
-      <td>NaN</td>
-      <td>New</td>
-      <td>NotFound</td>
-      <td>225.0</td>
-      <td>15.0</td>
-      <td>427.0</td>
-      <td>563.0</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>New</td>
-      <td>NotFound</td>
-      <td>NaN</td>
-      <td>chrome 67.0 for android</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>F</td>
-      <td>F</td>
-      <td>T</td>
-      <td>F</td>
-      <td>mobile</td>
-      <td>MYA-L13 Build/HUAWEIMYA-L13</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>3663588</td>
-      <td>0.0</td>
-      <td>3579.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>100.0</td>
-      <td>Found</td>
-      <td>NaN</td>
-      <td>-300.0</td>
-      <td>Found</td>
-      <td>Found</td>
-      <td>166.0</td>
-      <td>NaN</td>
-      <td>542.0</td>
-      <td>368.0</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>Found</td>
-      <td>Found</td>
-      <td>Android 6.0.1</td>
-      <td>chrome 67.0 for android</td>
-      <td>24.0</td>
-      <td>1280x720</td>
-      <td>match_status:2</td>
-      <td>T</td>
-      <td>F</td>
-      <td>T</td>
-      <td>T</td>
-      <td>mobile</td>
-      <td>LGLS676 Build/MXB48T</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>3663597</td>
-      <td>-5.0</td>
-      <td>185210.0</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>1.0</td>
-      <td>0.0</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>100.0</td>
-      <td>NotFound</td>
-      <td>52.0</td>
-      <td>-360.0</td>
-      <td>New</td>
-      <td>NotFound</td>
-      <td>225.0</td>
-      <td>NaN</td>
-      <td>271.0</td>
-      <td>507.0</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>New</td>
-      <td>NotFound</td>
-      <td>NaN</td>
-      <td>ie 11.0 for tablet</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>F</td>
-      <td>T</td>
-      <td>T</td>
-      <td>F</td>
-      <td>desktop</td>
-      <td>Trident/7.0</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-
-
-blabla
-
-
 ```python
 trans = TableDescriptor(df_train_ids,'Transaction_df','isFraud')
 ```
@@ -3392,13 +3115,11 @@ len(trans.variables)
 
 ## NaNs_rate
 
-
 ```python
 low_nan_vars=getCompletedVars(trans,nans_rate_cut_off = 0.025)
 ```
 
     Selected features: 14/42
-
 
 
 ```python
@@ -3409,7 +3130,7 @@ numerical_vars,categorical_vars= numerical_categorical_split(low_nan_vars,min_ca
     No of categorical features: 11
 
 
-## Clustering imputation method
+## Clustering Imputation Method
 
 
 ```python
