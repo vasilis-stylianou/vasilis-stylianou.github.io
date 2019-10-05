@@ -25,7 +25,7 @@ Note: During the completion of this project my work was distributed among a numb
 
 # Step 1: Data Cleaning
 
-# Libraries
+## Libraries
 ```python
 import numpy as np
 import pandas as pd
@@ -1761,6 +1761,7 @@ low_nan_vars=getCompletedVars(trans,nans_rate_cut_off = 0.1)
 Let us also use the method ```numerical_categorical_split``` to split the variables into two lists:
 - numerical_vars: a list of numerical variables with a number of unique values higher than 300
 - categorical_vars: a list of string variables or numerical variables with a number of unique values less than or equal to 300.
+
 ```python
 numerical_vars,categorical_vars= numerical_categorical_split(low_nan_vars,min_categories=300)
 ```
