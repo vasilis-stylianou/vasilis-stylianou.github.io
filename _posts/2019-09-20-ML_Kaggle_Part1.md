@@ -101,6 +101,7 @@ class TableDescriptor:
                                     label=self.label) for col in tqdm(df.columns)]
 ```
 
+
 # Import data
 
 ## i) Transactions
@@ -1770,11 +1771,11 @@ numerical_vars,categorical_vars= numerical_categorical_split(low_nan_vars,min_ca
     No of categorical features: 55
 
 
-## Clustering imputation method
+## Clustering Imputation Method
 Evidently, the data consists of a lot of missing values and in order to proceed we need to adopt an imputation method to fill these values. A quick way to achieve this would be to fill the missing values of each numerical/categorical column with the average/most frequent value of the column, excluding all NaNs.
 A more sophisticated way would be to find for each row with missing values, a cluster of the most similar rows, compute each column's average or most frequent value (restricted to the cluster's rows), and then impute the missing values of the row under consideration.
 
-The authors of this [https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6371325/](paper) has developed such a methodology - called Multiple Clustering Imputation Methodology (MCIM) - and published their algorithm [https://github.com/panas89/multipleClusteringImputation](here).
+The authors of this [paper](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6371325/) has developed such a methodology - called Multiple Clustering Imputation Methodology (MCIM) - and published their algorithm [here](https://github.com/panas89/multipleClusteringImputation).
 
 
 
