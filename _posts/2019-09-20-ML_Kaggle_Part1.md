@@ -1820,7 +1820,6 @@ df_train_test.loc[:,cat_cols] = df_train_test_cats.copy()
 from sklearn.preprocessing import LabelEncoder
 
 #label encoding strings of categorical variables
-
 lb_make = LabelEncoder()
 for col in cat_cols:
     lb_make.fit(df_train_test[col].dropna())
@@ -2853,10 +2852,8 @@ temp_df[cols].head(3)
 </div>
 
 ```python
-
 #replace temp_df with df_train_test
 df_train_test = temp_df
-
 ```
 
 ## ii) IDs
@@ -3127,9 +3124,7 @@ cols_ids = [var.name for var in low_nan_vars if var.name != 'isFraud']
 
 ```python
 all_cols = ['TransactionID']+ cols_ids
-
-df_train_test_ids = df_train_ids[all_cols].append(df_test_ids[all_cols],
-                                              ignore_index=True)
+df_train_test_ids = df_train_ids[all_cols].append(df_test_ids[all_cols], ignore_index=True)
 ```
 
 
