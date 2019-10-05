@@ -3129,12 +3129,13 @@ num_cols_ids = [var.name for var in numerical_vars if var.name not in ['Transact
 cat_cols_ids = [var.name for var in categorical_vars if var.name not in ['TransactionID','isFraud']]
 ```
 
-## Join Transactions & IDs
+## Left Join Transactions & IDs
+It is advantageous to join the IDs dataset with the imputed transactions dataset, because any complete data augmentation will result in a much more accurate clustering method for all those incomplete rows in  ```df_train_test_ids```.
 
-All TransactionID's from df_train_id are present in df_train_trans BUT ~76% of all TransactionID's of df_train_trans are missing from df_train_id.
-
+Let us perform a left join of the two datasets since ~76% of the TransactionID's in df_train_trans are missing from df_train_id.
 ```python
 df_all=pd.merge(df_train_test,df_train_test_id,on='TransactionID',how='left')
 df_all.shape
 ```
-## Clustering Imputation Method
+
+## Imputing Missing Values in IDs
