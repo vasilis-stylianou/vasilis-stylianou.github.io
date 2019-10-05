@@ -6,7 +6,7 @@ excerpt: Machine Learning, Feature Engineering, pandas, numpy
 ---
 
 # Intro:
-The following work was done during the Kaggle competition -  [IEEE-CIS Fraud Detection](https://www.kaggle.com/c/ieee-fraud-detection). Contestants were provided the following four datasets, from Vesta Corporation:
+The following work was done during the Kaggle competition -  [IEEE-CIS Fraud Detection](https://www.kaggle.com/c/ieee-fraud-detection). Contestants were provided with the following four datasets, from Vesta Corporation:
 - train_{transaction, identity}.csv - the training set
 - test_{transaction, identity}.csv - the test set
 
@@ -29,20 +29,59 @@ Note: During the completion of this project my work was distributed among a numb
 ```python
 import numpy as np
 import pandas as pd
-from fraud_pre_proc import *
+from scipy.stats import pearsonr
+import matplotlib.pyplot as plt
+import seaborn as sns
+sns.set_style("dark")
+
 
 pd.set_option('display.max_rows', 500)
 pd.set_option('display.max_columns', 500)
 pd.set_option('display.width', 1000)
 ```
 
+#Utility script for data cleaning and preprocessing
+```python
+from fraud_pre_proc import *
+```
+We shall use this script to declare new classes and methods to keep our code clean and neat. In particular, it'll be very useful to create a class called ```Variable``` to capture the statistical properties of each feature.
 
 ```python
-import matplotlib.pyplot as plt
-import seaborn as sns
-sns.set_style("dark")
+class Variable:
+    """Class to describe a variable"""
 
-```
+    def __init__(self,data_series,col_name,label=None):
+        """Method to initiate object.
+        Inputs:
+            data_series: pandas series Variable
+            col_name: string with column's col_name
+            label: data series of prediction
+        """
+        self.name = col_name
+        self.num_cats = len(data_series.unique()) #number of unique values in column
+        self.type = str(data_series.dtype)
+        self.num_nans = np.sum(data_series.isnull()) #number of NaNs in column
+        self.nans_rate = self.num_nans/len(data_series) #percent of NaNs in column
+        self.fraud_nans = np.sum(data_series[label==1].isnull()) #number of Fraud NaNs in column
+        self.fraud_nans_rate = self.fraud_nans/np.sum(label) #pct of Fraud NaNs in column
+
+        if str(data_series.dtype) == 'object':
+            try:
+                self.corr = self.correlation_ratio(data_series.values,label.values)
+            except:
+                self.corr = 'Invalid variable'
+                pass
+        else:
+            self.average = data_series.dropna().values.mean()
+            self.std = data_series.dropna().values.std()
+            try:
+                self.corr = pearsonr(data_series, label)[0]
+            except:
+                self.corr = 'Invalid variable'
+                pass
+
+```  
+
 
 # Import data
 
@@ -51,8 +90,8 @@ sns.set_style("dark")
 ```python
 #trans data
 #df_train_trans = import_data('./Data/train_transaction.csv',nrows=1000)
-df_train_trans = pd.read_csv('./Data/train_transaction.csv')
-df_test_trans = pd.read_csv('./Data/test_transaction.csv')
+df_train_trans = pd.import_data('./Data/train_transaction.csv')
+df_test_trans = pd.import_data('./Data/test_transaction.csv')
 ```
 
 
@@ -3397,8 +3436,8 @@ dumpObjects(cols,path+'cols')
 ```python
 #trans data
 #df_train_trans = import_data('./Data/train_transaction.csv',nrows=1000)
-df_train_ids = pd.read_csv('./Data/train_identity.csv')
-df_test_ids = pd.read_csv('./Data/test_identity.csv')
+df_train_ids = pd.import_data('./Data/train_identity.csv')
+df_test_ids = pd.import_data('./Data/test_identity.csv')
 ```
 
 
