@@ -2366,228 +2366,6 @@ for chunk in tqdm_notebook(np.array_split(df_train_trans, 1000)):
 
     x = x.append(df_test_trans_compl,ignore_index=True)
 ```
-
-## ii) IDs
-
-
-```python
-#trans data
-#df_train_trans = import_data('./Data/train_transaction.csv',nrows=1000)
-df_train_ids = pd.import_data('./Data/train_identity.csv')
-df_test_ids = pd.import_data('./Data/test_identity.csv')
-```
-
-
-```python
-df_train_ids['isFraud'] = [1]*len(df_train_ids)
-df_train_ids.head(3)
-```
-
-
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>TransactionID</th>
-      <th>id_01</th>
-      <th>id_02</th>
-      <th>id_03</th>
-      <th>id_04</th>
-      <th>id_05</th>
-      <th>id_06</th>
-      <th>id_07</th>
-      <th>id_08</th>
-      <th>id_09</th>
-      <th>id_10</th>
-      <th>id_11</th>
-      <th>id_12</th>
-      <th>id_13</th>
-      <th>id_14</th>
-      <th>id_15</th>
-      <th>id_16</th>
-      <th>id_17</th>
-      <th>id_18</th>
-      <th>id_19</th>
-      <th>id_20</th>
-      <th>id_21</th>
-      <th>id_22</th>
-      <th>id_23</th>
-      <th>id_24</th>
-      <th>id_25</th>
-      <th>id_26</th>
-      <th>id_27</th>
-      <th>id_28</th>
-      <th>id_29</th>
-      <th>id_30</th>
-      <th>id_31</th>
-      <th>id_32</th>
-      <th>id_33</th>
-      <th>id_34</th>
-      <th>id_35</th>
-      <th>id_36</th>
-      <th>id_37</th>
-      <th>id_38</th>
-      <th>DeviceType</th>
-      <th>DeviceInfo</th>
-      <th>isFraud</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>2987004</td>
-      <td>0.0</td>
-      <td>70787.0</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>100.0</td>
-      <td>NotFound</td>
-      <td>NaN</td>
-      <td>-480.0</td>
-      <td>New</td>
-      <td>NotFound</td>
-      <td>166.0</td>
-      <td>NaN</td>
-      <td>542.0</td>
-      <td>144.0</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>New</td>
-      <td>NotFound</td>
-      <td>Android 7.0</td>
-      <td>samsung browser 6.2</td>
-      <td>32.0</td>
-      <td>2220x1080</td>
-      <td>match_status:2</td>
-      <td>T</td>
-      <td>F</td>
-      <td>T</td>
-      <td>T</td>
-      <td>mobile</td>
-      <td>SAMSUNG SM-G892A Build/NRD90M</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>2987008</td>
-      <td>-5.0</td>
-      <td>98945.0</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>0.0</td>
-      <td>-5.0</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>100.0</td>
-      <td>NotFound</td>
-      <td>49.0</td>
-      <td>-300.0</td>
-      <td>New</td>
-      <td>NotFound</td>
-      <td>166.0</td>
-      <td>NaN</td>
-      <td>621.0</td>
-      <td>500.0</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>New</td>
-      <td>NotFound</td>
-      <td>iOS 11.1.2</td>
-      <td>mobile safari 11.0</td>
-      <td>32.0</td>
-      <td>1334x750</td>
-      <td>match_status:1</td>
-      <td>T</td>
-      <td>F</td>
-      <td>F</td>
-      <td>T</td>
-      <td>mobile</td>
-      <td>iOS Device</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>2987010</td>
-      <td>-5.0</td>
-      <td>191631.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>100.0</td>
-      <td>NotFound</td>
-      <td>52.0</td>
-      <td>NaN</td>
-      <td>Found</td>
-      <td>Found</td>
-      <td>121.0</td>
-      <td>NaN</td>
-      <td>410.0</td>
-      <td>142.0</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>Found</td>
-      <td>Found</td>
-      <td>NaN</td>
-      <td>chrome 62.0</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>F</td>
-      <td>F</td>
-      <td>T</td>
-      <td>T</td>
-      <td>desktop</td>
-      <td>Windows</td>
-      <td>1</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
 ```python
 #checking if nulls have been placed
 df_train_trans[cols].isnull().sum()[:5]
@@ -3155,6 +2933,228 @@ dumpObjects(cols+['pca_error'],path+'cols')
     Object saved!
     Object saved!
     Object saved!
+
+
+## ii) IDs
+
+
+```python
+#trans data
+#df_train_trans = import_data('./Data/train_transaction.csv',nrows=1000)
+df_train_ids = pd.import_data('./Data/train_identity.csv')
+df_test_ids = pd.import_data('./Data/test_identity.csv')
+```
+
+
+```python
+df_train_ids['isFraud'] = [1]*len(df_train_ids)
+df_train_ids.head(3)
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>TransactionID</th>
+      <th>id_01</th>
+      <th>id_02</th>
+      <th>id_03</th>
+      <th>id_04</th>
+      <th>id_05</th>
+      <th>id_06</th>
+      <th>id_07</th>
+      <th>id_08</th>
+      <th>id_09</th>
+      <th>id_10</th>
+      <th>id_11</th>
+      <th>id_12</th>
+      <th>id_13</th>
+      <th>id_14</th>
+      <th>id_15</th>
+      <th>id_16</th>
+      <th>id_17</th>
+      <th>id_18</th>
+      <th>id_19</th>
+      <th>id_20</th>
+      <th>id_21</th>
+      <th>id_22</th>
+      <th>id_23</th>
+      <th>id_24</th>
+      <th>id_25</th>
+      <th>id_26</th>
+      <th>id_27</th>
+      <th>id_28</th>
+      <th>id_29</th>
+      <th>id_30</th>
+      <th>id_31</th>
+      <th>id_32</th>
+      <th>id_33</th>
+      <th>id_34</th>
+      <th>id_35</th>
+      <th>id_36</th>
+      <th>id_37</th>
+      <th>id_38</th>
+      <th>DeviceType</th>
+      <th>DeviceInfo</th>
+      <th>isFraud</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>2987004</td>
+      <td>0.0</td>
+      <td>70787.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>100.0</td>
+      <td>NotFound</td>
+      <td>NaN</td>
+      <td>-480.0</td>
+      <td>New</td>
+      <td>NotFound</td>
+      <td>166.0</td>
+      <td>NaN</td>
+      <td>542.0</td>
+      <td>144.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>New</td>
+      <td>NotFound</td>
+      <td>Android 7.0</td>
+      <td>samsung browser 6.2</td>
+      <td>32.0</td>
+      <td>2220x1080</td>
+      <td>match_status:2</td>
+      <td>T</td>
+      <td>F</td>
+      <td>T</td>
+      <td>T</td>
+      <td>mobile</td>
+      <td>SAMSUNG SM-G892A Build/NRD90M</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2987008</td>
+      <td>-5.0</td>
+      <td>98945.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.0</td>
+      <td>-5.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>100.0</td>
+      <td>NotFound</td>
+      <td>49.0</td>
+      <td>-300.0</td>
+      <td>New</td>
+      <td>NotFound</td>
+      <td>166.0</td>
+      <td>NaN</td>
+      <td>621.0</td>
+      <td>500.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>New</td>
+      <td>NotFound</td>
+      <td>iOS 11.1.2</td>
+      <td>mobile safari 11.0</td>
+      <td>32.0</td>
+      <td>1334x750</td>
+      <td>match_status:1</td>
+      <td>T</td>
+      <td>F</td>
+      <td>F</td>
+      <td>T</td>
+      <td>mobile</td>
+      <td>iOS Device</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2987010</td>
+      <td>-5.0</td>
+      <td>191631.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>100.0</td>
+      <td>NotFound</td>
+      <td>52.0</td>
+      <td>NaN</td>
+      <td>Found</td>
+      <td>Found</td>
+      <td>121.0</td>
+      <td>NaN</td>
+      <td>410.0</td>
+      <td>142.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>Found</td>
+      <td>Found</td>
+      <td>NaN</td>
+      <td>chrome 62.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>F</td>
+      <td>F</td>
+      <td>T</td>
+      <td>T</td>
+      <td>desktop</td>
+      <td>Windows</td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+</div>
 
 
 
