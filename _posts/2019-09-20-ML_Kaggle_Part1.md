@@ -2857,7 +2857,7 @@ temp_df[cols].head(3)
 #replace temp_df with df_train_test
 df_train_test = temp_df
 
-
+```
 
 ## ii) IDs
 
