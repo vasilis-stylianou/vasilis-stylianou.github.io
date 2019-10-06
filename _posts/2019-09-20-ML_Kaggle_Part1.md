@@ -1770,31 +1770,31 @@ numerical_vars,categorical_vars= numerical_categorical_split(low_nan_vars,min_ca
     No of categorical features: 55
 
 
-## Clustering Imputation Method
+## Multiple Clustering Imputation Method
 Evidently, the data consists of a lot of missing values and in order to proceed we need to adopt an imputation method to fill these values. A quick way to achieve this would be to fill the missing values of each numerical/categorical column with the average/most frequent value of the column, excluding all NaNs.
 A more sophisticated way would be to find for each row with missing values, a cluster of the most similar rows, compute each column's average or most frequent value (restricted to the cluster's rows), and then impute the missing values of the row under consideration.
 
-The authors of this [paper](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6371325/) has developed such a methodology - called Multiple Clustering Imputation Methodology (MCIM) - and published their algorithm [here](https://github.com/panas89/multipleClusteringImputation). The code has been appropriately adapted and saved in our github repository as ```mcip.py```.
+The authors of this [paper](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6371325/) has developed such a methodology - called Multiple Clustering Imputation Process (MCIP) - and published their algorithm [here](https://github.com/panas89/multipleClusteringImputation). The code has been appropriately adapted and saved in our github repository as ```mcip.py```.
 
 Before we begin the imputation let us increase the number of available non-NaN data by concatenating the train and test sets together.
 
 ```python
-num_cols = [var.name for var in numerical_vars if var.name not in ['TransactionID','isFraud']]
-cat_cols = [var.name for var in categorical_vars if var.name not in ['TransactionID','isFraud']]
-cols = num_cols + cat_cols
+num_cols_trans = [var.name for var in numerical_vars if var.name not in ['TransactionID','isFraud']]
+cat_cols_trans = [var.name for var in categorical_vars if var.name not in ['TransactionID','isFraud']]
+cols_trans = num_cols_trans + cat_cols_trans
 ```
 
 
 ```python
-all_cols = ['TransactionID']+ cols
+all_cols_trans = ['TransactionID']+ cols_trans
 
-df_train_test = df_train_trans[all_cols].append(df_test_trans[all_cols],
+df_train_test_trans = df_train_trans[all_cols_trans].append(df_test_trans[all_cols_trans],
                                               ignore_index=True)
 ```
 
 
 ```python
-df_train_test.shape
+df_train_test_trans.shape
 ```
 
 
@@ -1806,33 +1806,33 @@ df_train_test.shape
 ## Some Technical Prerequisites
 ```python
 #numpy array of nulls
-bool_nulls_train = df_train_test.loc[:,cat_cols].isnull()
+bool_nulls_train = df_train_test_trans.loc[:,cat_cols_trans].isnull()
 
 #replacing nulls with 'NaN' so that it can be used with the encoder
-for col in cat_cols:
-    df_train_test[col] = df_train_test[col].astype('str')
+for col in cat_cols_trans:
+    df_train_test_trans[col] = df_train_test_trans[col].astype('str')
 
-df_train_test_cats = df_train_test.loc[:,cat_cols].copy()
+df_train_test_cats = df_train_test_trans.loc[:,cat_cols_trans].copy()
 df_train_test_cats[df_train_test_cats.isnull()] = 'NaN'
-df_train_test.loc[:,cat_cols] = df_train_test_cats.copy()
+df_train_test_trans.loc[:,cat_cols_trans] = df_train_test_cats.copy()
 ```
 ```python
 from sklearn.preprocessing import LabelEncoder
 
 #label encoding strings of categorical variables
 lb_make = LabelEncoder()
-for col in cat_cols:
-    lb_make.fit(df_train_test[col].dropna())
-    df_train_test[col] = lb_make.transform(df_train_test[col])
+for col in cat_cols_trans:
+    lb_make.fit(df_train_test_trans[col].dropna())
+    df_train_test_trans[col] = lb_make.transform(df_train_test_trans[col])
 
 #replacing categorical varibales with 'NaN' value to nulls
-df_train_test_cats = df_train_test.loc[:,cat_cols].copy()
+df_train_test_cats = df_train_test_trans.loc[:,cat_cols_trans].copy()
 df_train_test_cats[bool_nulls_train] = np.nan
-df_train_test.loc[:,cat_cols] = df_train_test_cats.copy()
+df_train_test_trans.loc[:,cat_cols_trans] = df_train_test_cats.copy()
 ```
 
 ```python
-df_train_test[cols].head(3)
+df_train_test_trans[cols_trans].head(3)
 ```
 
 
@@ -2323,20 +2323,20 @@ from mcip import *
 
 
 ```python
-temp_df = pd.DataFrame(columns=df_train_test.columns)
+temp_df = pd.DataFrame(columns=df_train_test_trans.columns)
 
-for chunk in tqdm_notebook(np.array_split(df_train_test, 1000)):
-    df_trans_compl = replaceMissValMCIP(df_train_test,
+for chunk in tqdm_notebook(np.array_split(df_train_test_trans, 1000)):
+    df_trans_compl = replaceMissValMCIP(df_train_test_trans,
                                           chunk.reset_index(drop=True),
-                                          cols=cols,frac=0.001,
-                                          categorical=cat_cols,
-                                          continuous=num_cols)
+                                          cols=cols_trans,frac=0.001,
+                                          categorical=cat_cols_trans,
+                                          continuous=num_cols_trans)
 
     temp_df = temp_df.append(df_trans_compl,ignore_index=True)
 ```
 ```python
 #checking if nulls have been placed
-df_train_test[cols].isnull().sum()[:5]
+df_train_test_trans[cols_trans].isnull().sum()[:5]
 ```
 
 
@@ -2354,7 +2354,7 @@ df_train_test[cols].isnull().sum()[:5]
 
 ```python
 #checking if cols were imputed
-temp_df[cols].isnull().sum()[:5]
+temp_df[cols_trans].isnull().sum()[:5]
 ```
 
 
@@ -2371,7 +2371,7 @@ temp_df[cols].isnull().sum()[:5]
 
 
 ```python
-temp_df[cols].head(3)
+temp_df[cols_trans].head(3)
 ```
 
 
@@ -2852,8 +2852,8 @@ temp_df[cols].head(3)
 </div>
 
 ```python
-#replace temp_df with df_train_test
-df_train_test = temp_df
+#replace temp_df with df_train_test_trans
+df_train_test_trans = temp_df
 ```
 
 ## ii) IDs
@@ -3116,8 +3116,8 @@ numerical_vars,categorical_vars= numerical_categorical_split(low_nan_vars,min_ca
 
 ```python
 cols_ids = [var.name for var in low_nan_vars if var.name != 'isFraud']
-all_cols = ['TransactionID']+ cols_ids
-df_train_test_ids = df_train_ids[all_cols].append(df_test_ids[all_cols], ignore_index=True)
+all_cols_ids = ['TransactionID']+ cols_ids
+df_train_test_ids = df_train_ids[all_cols_ids].append(df_test_ids[all_cols_ids], ignore_index=True)
 df_train_test_ids.shape
 ```
 
@@ -3129,13 +3129,594 @@ num_cols_ids = [var.name for var in numerical_vars if var.name not in ['Transact
 cat_cols_ids = [var.name for var in categorical_vars if var.name not in ['TransactionID','isFraud']]
 ```
 
-## Left Join Transactions & IDs
+## Join Transactions & IDs
 It is advantageous to join the IDs dataset with the imputed transactions dataset, because any complete data augmentation will result in a much more accurate clustering method for all those incomplete rows in  ```df_train_test_ids```.
 
-Let us perform a left join of the two datasets since ~76% of the TransactionID's in df_train_trans are missing from df_train_id.
+Let us perform a left join of the two datasets since ~76% of the TransactionID's in ```df_train_test_trans``` are missing from ```df_train_test_ids```.
 ```python
-df_all=pd.merge(df_train_test,df_train_test_id,on='TransactionID',how='left')
+df_all=pd.merge(df_train_test_trans,df_train_test_ids,on='TransactionID',how='left')
 df_all.shape
 ```
+```python
+cat_cols = cat_cols_trans + cat_cols_ids
+num_cols = num_cols_trans + num_cols_ids
+cols = cols_trans + cols_ids
+```
 
-## Imputing Missing Values in IDs
+## Imputing Missing Values of IDs
+
+```python
+#numpy array of nulls
+bool_nulls = df_all.loc[:,cat_cols].isnull()
+
+#making cat vars to string to be saved as objects
+for col in cat_cols:
+    df_all[col] = df_all[col].astype('str')
+
+#replacing nulls with 'NaN' so that it can be used with the encoder
+df_all_cats = df_all.loc[:,cat_cols].copy()
+df_all_cats[df_all_cats.isnull()] = 'NaN'
+df_all.loc[:,cat_cols] = df_all_cats.copy()
+
+#label encoding strings of categorical variables
+lb_make = LabelEncoder()
+for col in cat_cols:
+    lb_make.fit(df_all[col].dropna())
+    df_all[col] = lb_make.transform(df_all[col])
+
+#replacing categorical varibales with 'NaN' value to nulls
+df_all_cats = df_all.loc[:,cat_cols].copy()
+df_all_cats[bool_nulls] = np.nan
+df_all.loc[:,cat_cols] = df_all_cats.copy()
+```
+
+```python
+temp_df= pd.DataFrame(columns=df_all.columns)
+
+for chunk in tqdm_notebook(np.array_split(df_all, 200)):
+    df_all_compl = replaceMissValMCIP(df_all,
+                                    chunk.reset_index(drop=True),frac=0.001,
+                                    cols=cols,categorical=cat_cols,
+                                    continuous=num_cols)
+
+    temp_df = temp_df.append(df_all_compl,ignore_index=True)
+
+```python
+temp_df[cols].head(3)
+```
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>TransactionDT</th>
+      <th>TransactionAmt</th>
+      <th>card1</th>
+      <th>card2</th>
+      <th>C1</th>
+      <th>C2</th>
+      <th>C4</th>
+      <th>C5</th>
+      <th>C6</th>
+      <th>C7</th>
+      <th>C8</th>
+      <th>C10</th>
+      <th>C11</th>
+      <th>C12</th>
+      <th>C13</th>
+      <th>C14</th>
+      <th>D1</th>
+      <th>V95</th>
+      <th>V96</th>
+      <th>V97</th>
+      <th>V101</th>
+      <th>V102</th>
+      <th>V103</th>
+      <th>V126</th>
+      <th>V127</th>
+      <th>V128</th>
+      <th>V129</th>
+      <th>V130</th>
+      <th>V131</th>
+      <th>V132</th>
+      <th>V133</th>
+      <th>V134</th>
+      <th>V135</th>
+      <th>V136</th>
+      <th>V137</th>
+      <th>V279</th>
+      <th>V280</th>
+      <th>V293</th>
+      <th>V294</th>
+      <th>V295</th>
+      <th>V306</th>
+      <th>V307</th>
+      <th>V308</th>
+      <th>V309</th>
+      <th>V310</th>
+      <th>V311</th>
+      <th>V312</th>
+      <th>V313</th>
+      <th>V314</th>
+      <th>V315</th>
+      <th>V316</th>
+      <th>V317</th>
+      <th>V318</th>
+      <th>V319</th>
+      <th>V320</th>
+      <th>V321</th>
+      <th>ProductCD</th>
+      <th>card3</th>
+      <th>card4</th>
+      <th>card5</th>
+      <th>card6</th>
+      <th>C3</th>
+      <th>C9</th>
+      <th>V98</th>
+      <th>V99</th>
+      <th>V100</th>
+      <th>V104</th>
+      <th>V105</th>
+      <th>V106</th>
+      <th>V107</th>
+      <th>V108</th>
+      <th>V109</th>
+      <th>V110</th>
+      <th>V111</th>
+      <th>V112</th>
+      <th>V113</th>
+      <th>V114</th>
+      <th>V115</th>
+      <th>V116</th>
+      <th>V117</th>
+      <th>V118</th>
+      <th>V119</th>
+      <th>V120</th>
+      <th>V121</th>
+      <th>V122</th>
+      <th>V123</th>
+      <th>V124</th>
+      <th>V125</th>
+      <th>V281</th>
+      <th>V282</th>
+      <th>V283</th>
+      <th>V284</th>
+      <th>V285</th>
+      <th>V286</th>
+      <th>V287</th>
+      <th>V288</th>
+      <th>V289</th>
+      <th>V290</th>
+      <th>V291</th>
+      <th>V292</th>
+      <th>V296</th>
+      <th>V297</th>
+      <th>V298</th>
+      <th>V299</th>
+      <th>V300</th>
+      <th>V301</th>
+      <th>V302</th>
+      <th>V303</th>
+      <th>V304</th>
+      <th>V305</th>
+      <th>pca_error</th>
+      <th>TransactionID</th>
+      <th>id_01</th>
+      <th>id_02</th>
+      <th>id_11</th>
+      <th>id_12</th>
+      <th>id_15</th>
+      <th>id_28</th>
+      <th>id_29</th>
+      <th>id_35</th>
+      <th>id_36</th>
+      <th>id_37</th>
+      <th>id_38</th>
+      <th>DeviceType</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>86400.0</td>
+      <td>68.5</td>
+      <td>13926.0</td>
+      <td>357.13153</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>2.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>14.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>117.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>117.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>117.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>117.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>4.0</td>
+      <td>79.0</td>
+      <td>1.0</td>
+      <td>75.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.002857</td>
+      <td>2987000.0</td>
+      <td>41.0</td>
+      <td>206475.041812</td>
+      <td>99.687317</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>86401.0</td>
+      <td>29.0</td>
+      <td>2755.0</td>
+      <td>404.00000</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>4.0</td>
+      <td>79.0</td>
+      <td>2.0</td>
+      <td>50.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.000613</td>
+      <td>2987001.0</td>
+      <td>41.0</td>
+      <td>206475.041812</td>
+      <td>99.687317</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>86469.0</td>
+      <td>59.0</td>
+      <td>4663.0</td>
+      <td>490.00000</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>4.0</td>
+      <td>79.0</td>
+      <td>3.0</td>
+      <td>101.0</td>
+      <td>2.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.000534</td>
+      <td>2987002.0</td>
+      <td>41.0</td>
+      <td>206475.041812</td>
+      <td>99.687317</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+```python
+#filter data of interest
+df_all = temp_df[cols].copy()
+```
