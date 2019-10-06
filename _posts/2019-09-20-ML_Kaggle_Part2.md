@@ -12,8 +12,9 @@ Recall that in the previous post I set up the problem of predicting fraudulent c
 3. Feature Selection and Preprocessing
 4. Model Training/Evaluation/Selection
 
-In [Part I](https://vasilis-stylianou.github.io/ML_Kaggle_Part1/) I covered the first three steps. In this post I discuss the last step. 
+In [Part I](https://vasilis-stylianou.github.io/ML_Kaggle_Part1/) I covered the first three steps. In this post I discuss the last step.
 
+# Step 4: Model Training/Evaluation/Selection
 ## Libraries
 ```python
 import numpy as np
