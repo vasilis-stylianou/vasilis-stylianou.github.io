@@ -3723,17 +3723,22 @@ df_all = temp_df[cols].copy()
 ```
 
 # Step 2: Feature Engineering
+
+To this end we would like to extend our set of features by engineering some new ones. This process will allow us to isolate some key information from the existing features, and even highlight various patterns.
+All feature-engineering methods used in this post are contained in the python script  ```fraud_feat_engineering```.
 ```python
 from fraud_feat_engineering import *
 ```
 
 ## 2.1 Datetime Features
-
-
+The fist set of engineered features are extracted from the timedeltas in the column called ```TransactionDT```.
 ```python
 period_feats=addDatetimeFeats(df_all)
+period_feats
 ```
+    ['month','week','yearday','hour','weekday','day']
 
+The ```addDatetimeFeats``` method converts the timedelta's of ```TransactionDT``` to datetime objects and adds datetime-like columns to ```df_all``` whose names are returned in a python list.
 ## 2.2 Interaction Features
 
 
