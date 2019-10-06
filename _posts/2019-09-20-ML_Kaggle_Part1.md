@@ -41,7 +41,7 @@ pd.set_option('display.width', 1000)
 
 ## Utility script for data cleaning and preprocessing
 
-It is very useful to create a utility python script to keep our code clean and neat. For example, we can create a class called ```Variable``` to capture all the important statistical properties and attributes of each feature (the terms features/columns/variables are used interchangeably in this post):
+It is very useful to create a utility script for data analysis as this will help us keep our code clean and neat. For example, we can create a class called ```Variable``` to capture all the important statistical properties and attributes of each feature (the terms features/columns/variables are used interchangeably in this post):
 
 ```python
 class Variable:
@@ -77,7 +77,7 @@ class Variable:
                 self.corr = 'Invalid variable'
                 pass
 ```
-With the above class in hand, we can also define another class, called ```TableDescriptor```, to massively create a list of```Variable``` objects associated to the columns of an input dataframe:
+With the above class in hand, we can also define another class, called ```TableDescriptor```, to create a list of ```Variable``` objects for the columns of an input dataframe:
 
 ```python
 class TableDescriptor:
@@ -97,7 +97,7 @@ class TableDescriptor:
         self.variables = [Variable(df[col],col,
                                     label=self.label) for col in tqdm(df.columns)]
 ```
-All such user-defined classes (and methods) which help for data cleaning and preprocessing will be added in the python script ```fraud_pre_proc```. 
+From now on, we refer the reader to the python script ```fraud_pre_proc``` for all the user-defined classes (and methods) which help for data cleaning and preprocessing.
 
 ```python
 from fraud_pre_proc import *
