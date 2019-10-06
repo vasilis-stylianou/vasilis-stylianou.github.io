@@ -103,7 +103,7 @@ class TableDescriptor:
 
 # Import data
 
-## i) Transactions
+## 1.1.1 Transactions
 
 ```python
 df_train_trans = import_data('./Data/train_transaction.csv')
@@ -1770,7 +1770,7 @@ numerical_vars,categorical_vars= numerical_categorical_split(low_nan_vars,min_ca
     No of categorical features: 55
 
 
-## Multiple Clustering Imputation Method
+## 1.1.2 Multiple Clustering Imputation Method
 Evidently, the data consists of a lot of missing values and in order to proceed we need to adopt an imputation method to fill these values. A quick way to achieve this would be to fill the missing values of each numerical/categorical column with the average/most frequent value of the column, excluding all NaNs.
 A more sophisticated way would be to find for each row with missing values, a cluster of the most similar rows, compute each column's average or most frequent value (restricted to the cluster's rows), and then impute the missing values of the row under consideration.
 
@@ -2856,7 +2856,7 @@ temp_df[cols_trans].head(3)
 df_train_test_trans = temp_df
 ```
 
-## ii) IDs
+## 1.2.1 IDs
 
 
 ```python
@@ -3129,7 +3129,7 @@ num_cols_ids = [var.name for var in numerical_vars if var.name not in ['Transact
 cat_cols_ids = [var.name for var in categorical_vars if var.name not in ['TransactionID','isFraud']]
 ```
 
-## Join Transactions & IDs
+## 1.2.2 Join Transactions & IDs
 It is advantageous to join the IDs dataset with the imputed transactions dataset, because any complete data augmentation will result in a much more accurate clustering method for all those incomplete rows in  ```df_train_test_ids```.
 
 Let us perform a left join of the two datasets since ~76% of the TransactionID's in ```df_train_test_trans``` are missing from ```df_train_test_ids```.
@@ -3143,7 +3143,7 @@ num_cols = num_cols_trans + num_cols_ids
 cols = cols_trans + cols_ids
 ```
 
-## Imputing Missing Values of IDs
+## 1.2.3 Imputing Missing Values of IDs
 
 ```python
 #numpy array of nulls
@@ -3180,7 +3180,7 @@ for chunk in tqdm_notebook(np.array_split(df_all, 200)):
                                     continuous=num_cols)
 
     temp_df = temp_df.append(df_all_compl,ignore_index=True)
-    
+
 temp_df[cols].head(3)
 ```
 <div>
@@ -3719,3 +3719,252 @@ temp_df[cols].head(3)
 #filter data of interest
 df_all = temp_df[cols].copy()
 ```
+
+# Step 2: Feature Engineering
+```python
+from fraud_feat_engineering import *
+```
+
+## 2.1 Datetime Features
+
+
+```python
+period_feats=addDatetimeFeats(df_all)
+```
+
+## 2.2 Interaction Features
+
+
+```python
+#B.1 Add Interaction Features by ADDING the values of card_ and addr_ columns
+card_addr_interactions = addCardAddressInteractionFeats(df_all)
+```
+
+
+```python
+df_all[card_addr_interactions].head(3)
+```
+
+
+```python
+card_addr_feats = card_addr_interactions + ['card1','card2','card3','card5']
+```
+
+
+```python
+#B.2 Add interaction features by ADDING the values of card_addr_feats and period_feats
+#   and computing value frequencies
+new_feats = addDatetimeInteractionFeats(df_all, cols=card_addr_feats, period_cols=period_feats);
+```
+
+## 2.3 Aggregated Features
+
+
+```python
+cards = ['card1','card2','card3','card5']
+```
+
+
+```python
+# Add aggregated features by grouping-by card_addr_feats and computing the mean & STD of 'TransactionAmt'
+agg_feats = addAggTransAmtFeats(df_all,cols=cards);
+```
+
+### 2.4. Indicator/Frequency Features
+
+
+```python
+try_cols = cards + ['C1','C2','C3','C4','C5','C6','C7','C8','C9','C10','C11','C12','C13','C14',
+        'D1','D2','D3','D4','D5','D6','D7','D8',
+        'addr1','addr2',
+        'dist1','dist2',
+        'P_emaildomain', 'R_emaildomain',
+        'DeviceInfo','DeviceType',
+        'id_30','id_33']
+```
+
+
+```python
+# Add indicator features by computing the value frequencies of try_cols
+freq_feats = addFrequencyFeats(df_all,cols=try_cols);
+```
+
+```python
+new_cols = period_feats + agg_feats + freq_feats
+```
+
+# Step 3: Preprocessing and Feature Selection
+
+
+```python
+df_fraud = pd.read_csv('./Data/train_transaction.csv',usecols = ['isFraud'])
+```
+
+
+```python
+df_train = df_all.iloc[:len(df_fraud),:].copy()
+```
+
+
+```python
+df_train.head(3)
+```
+
+
+```python
+df_train['isFraud'] = df_fraud['isFraud'].values
+```
+
+
+```python
+all_vars = TableDescriptor(df_train,'All_data','isFraud')
+```
+
+## 3.1 Filter Features by Correlation to target
+
+
+
+
+```python
+#convert cat cols to cat vars
+numerical_vars = [var for var in all_vars.variables if var.name in num_cols+new_cols]
+#select high-correlated cat vars
+num_vars = getCorrelatedFeatures(numerical_vars,corr_cut_off=0.005)
+#list of high-correlated cat cols
+new_num_cols = [var.name for var in num_vars]
+```
+
+
+```python
+#convert cat cols to cat vars
+categorical_vars = [var for var in all_vars.variables if var.name in cat_cols]
+#select high-correlated cat vars
+cat_vars = getCorrelatedFeatures(categorical_vars,corr_cut_off=0.1)
+#list of high-correlated cat cols
+new_cat_cols = [var.name for var in cat_vars]
+```
+
+## 3.2. Convert categorical data to Dummies or Codes
+
+
+```python
+all_cols = new_cat_cols + new_num_cols
+```
+
+
+```python
+#all_cols.remove('TransactionDT')
+```
+
+
+```python
+df_all = to_categorical(df=df_all[all_cols],cat_cols=new_cat_cols,how='dummies')
+df_all.shape
+```
+
+
+```python
+print_null_cols(df_all)
+```
+
+## 3.3 PCA
+
+
+```python
+# # feature scalingmodel.best_performance
+num_cols.remove('TransactionDT')
+X_train = df_all[new_num_cols].values
+
+from sklearn.preprocessing import StandardScaler
+scaler = StandardScaler().fit(X_train)
+
+X_train_scaled=scaler.transform(X_train)
+
+
+PCAT = PCATransformer(X_train_scaled)
+```
+
+
+```python
+df_all['pca_error'] = PCAT.rec_error(X_train_scaled).reshape(-1,1)
+```
+
+# 3.4. Stratified Split training and validation data
+
+
+```python
+df_train_dummy = df_all.iloc[:len(df_fraud),:].copy()
+```
+
+
+```python
+x_cols = [col for col in df_train_dummy.columns.tolist() if col not in ['TransactionID','isFraud']]
+y_col = 'isFraud'
+```
+
+
+```python
+#define X and y of df_train
+
+X, y = df_train_dummy.loc[:,x_cols].values, df_train.loc[:,y_col].values
+
+X_train, X_test, y_train, y_test = getStratifiedTrainTestSplit(X,y,frac=0.2,n_splits=1,
+                                                                random_state=0)
+```
+
+
+```python
+#df's shapes
+
+for i in [X_train, X_test, y_train, y_test]:
+    print(i.shape)
+```
+
+
+```python
+df_test = df_all.loc[len(df_fraud):,x_cols].copy()
+df_test.shape
+```
+
+## 3.5 Save Analyzed Data
+
+
+```python
+from pickleObjects import *
+```
+
+
+```python
+path = './Data/'
+
+dumpObjects(X_train,path+'X_train')
+dumpObjects(y_train,path+'y_train')
+dumpObjects(X_test,path+'X_test')
+dumpObjects(y_test,path+'y_test')
+dumpObjects(df_test.values,path+'X_test_submission')
+```
+
+
+# Summary: The Tuning Knobs
+
+## Step 1: Data Cleaning
+A. Number of low NaN-rate features: nans_rate_cut_off (parameter)
+B.
+- Numerical_categorical split: min_categories (parameter)
+- Methods to fill NaNs: Vasilis or Papes
+
+## Step 2: Feature Engineering
+2.1 Which Datetime Feats to add: select manually
+2.2.1 Which Card-Address Interaction Feats to add: : select manually
+2.2.2 Which Card-Address-Datetime Interaction Feats to add:
+- period_feats (list)<br>
+- card_addr_feats (list)<br>
+2.3 Which Aggregated TransAmt Feats to add: select manually
+2.4 Which Frequency Feats to add: select manually
+
+## Step 3: Preprocessing and Feature Selection
+Numerical_categorical split: min_categories (parameter)
+3.1 Number of highly correlated features: corr_cut_off (parameter)
+3.2 Method of treating categorical feats: how = {'dummies','label_enc'}
+3.3 (PCA)
+3.4. Stratified split parameters: frac, n_splits
