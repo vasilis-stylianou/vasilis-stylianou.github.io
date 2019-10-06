@@ -1,8 +1,8 @@
 ---
 title: "Machine Learning (Kaggle): Part I"
 date: 2019-09-20
-tags: [machine learning, data science, pandas, numpy]
-excerpt: Machine Learning, Feature Engineering, pandas, numpy
+tags: [machine learning, Imputation, PCA, Feature Engineering, pandas, numpy]
+excerpt: Imputation, Feature Engineering, PCA, pandas, numpy
 ---
 
 # Intro:
