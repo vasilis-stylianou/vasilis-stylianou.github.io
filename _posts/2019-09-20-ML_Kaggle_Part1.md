@@ -119,7 +119,6 @@ df_train_trans.head(3)
 
 
 
-
 <div>
 <style scoped>
     .dataframe tbody tr th:only-of-type {
@@ -1730,6 +1729,13 @@ df_train_trans.head(3)
 </table>
 </div>
 
+Let us compute the percent of fraudulent labels in the dataset.
+```python
+np.sum(df_train_trans.isFraud==1)/len(df_train_trans)
+```
+    0.03499000914417313
+
+Only 3.5% of the train samples are labeled as fraudulent, i.e. the train set is highly **imbalanced**!
 
 ```python
 trans = TableDescriptor(df_train_trans,'Transaction_df','isFraud')
@@ -3820,35 +3826,29 @@ cat_vars = getCorrelatedFeatures(categorical_vars,corr_cut_off=0.1)
 new_cat_cols = [var.name for var in cat_vars]
 ```
     Selected features: 18/42
-    
-## 3.2. Convert categorical data to Dummies or Codes
 
+## 3.2. Convert categorical data to Dummies or Codes
 
 ```python
 all_cols = new_cat_cols + new_num_cols
-```
-
-
-```python
-#all_cols.remove('TransactionDT')
-```
-
-
-```python
 df_all = to_categorical(df=df_all[all_cols],cat_cols=new_cat_cols,how='dummies')
-df_all.shape
 ```
-
-
 ```python
 print_null_cols(df_all)
 ```
+    No null columns.
 
-## 3.3 PCA
+## 3.3 PCA & Reconstruction Error
 
+Before we split the train data we can actually add one more feature using Principal Component Analysis (PCA). Now the main idea behind PCA is to find a matrix transformation under which the features transform into a new set of features, the principal components, which are as uncorrelated as possible. Once such a matrix transformation is learned, one can apply the inverse transformation on the principal components to get back the original set of features. In doing so though, the inverse transformation will return the values of the original features slightly modified. This difference between the input values and those obtained after the inverse transformation is called the reconstruction error.
+
+We can therefore use PCA to assign a reconstruction error to each train sample; we expect that  distinguish samples with high reconstruction error
+
+
+Such a transformation relies on minimizing the
 
 ```python
-# # feature scalingmodel.best_performance
+# feature scalingmodel.best_performance
 num_cols.remove('TransactionDT')
 X_train = df_all[new_num_cols].values
 
