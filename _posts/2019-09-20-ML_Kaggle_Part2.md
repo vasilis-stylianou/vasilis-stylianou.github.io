@@ -6,7 +6,13 @@ excerpt: sklearn, keras, XGBoost, Neural Networks
 ---
 
 # Intro:
+Recall that in the previous post I set up the problem of predicting fraudulent card transactions for the Kaggle competition: [IEEE-CIS Fraud Detection](https://www.kaggle.com/c/ieee-fraud-detection). In particular I split this problem into four steps:
+1. Data Cleaning
+2. Feature Engineering
+3. Feature Selection and Preprocessing
+4. Model Training/Evaluation/Selection
 
+In [Part I](https://vasilis-stylianou.github.io/ML_Kaggle_Part1/) I covered the first three steps. In this post I discuss the last step. 
 
 ## Libraries
 ```python
@@ -96,170 +102,8 @@ X_test_scaled=scaler.transform(X_test)
 
 # A. Machine Learning Models
 
-## 1. Naive Bayes
 
-
-```python
-from sklearn.naive_bayes import GaussianNB
-from sklearn.metrics import roc_auc_score
-```
-
-
-```python
-clf = GaussianNB()
-clf.fit(X_train_scaled, y_train.astype(int))
-y_pred=clf.predict_proba(X_test_scaled)[:, 1]
-clf_roc=roc_auc_score(y_test.astype(int),y_pred)
-clf_roc
-```
-
-## 2. Logistic Regression
-
-
-```python
-from sklearn.pipeline import Pipeline
-from tqdm import tqdm
-
-from sklearn.linear_model import LogisticRegression
-clf = LogisticRegression(random_state=0, solver='lbfgs')
-
-
-LR = Pipeline([('LR', clf)])
-
-penalties = ['l1', 'l2']
-Cs = np.logspace(-4, 1, 20)
-solvers = ['liblinear']
-
-parameters = [{'LR__penalty':penalty, 'LR__C': c, 'LR__solver':solver}
-              for penalty in penalties
-              for c in Cs
-              for solver in solvers]
-
-print('Number of parameters: ' , len(parameters))
-```
-
-
-```python
-model = ModelTuner(pipeline=LR,parameters=parameters[:10], X_train=X_train_scaled,
-                    y_train=y_train.astype(int), X_valid=X_test_scaled,
-                    y_valid=y_test.astype(int), eval_metric=roc_auc_score)
-```
-
-
-```python
-model.best_performance
-```
-
-## 3. SVM
-
-
-```python
-from sklearn import svm
-
-clf = svm.SVC(C=1.0, cache_size=200, class_weight=None, coef0=0.0,
-            decision_function_shape='ovr', degree=3, gamma='scale', kernel='rbf',
-            max_iter=-1, probability=True, random_state=0, shrinking=True,
-            tol=0.001, verbose=False)
-
-
-SVM = Pipeline([('SVM', clf)])
-
-Cs = [0.001, 0.01, 0.1, 1, 10]
-gammas = [0.001, 0.01, 0.1, 1]
-kernels = ['rbf','poly','linear']
-
-
-parameters = [{'SVM__gamma':gamma, 'SVM__C': c, 'SVM__kernel':kernel}
-              for gamma in gammas
-              for c in Cs
-              for kernel in kernels]
-
-print('Number of parameters: ' , len(parameters))
-```
-
-
-```python
-model = ModelTuner(pipeline=SVM,parameters=parameters[:5], X_train=X_train_scaled,
-                    y_train=y_train.astype(int), X_valid=X_test_scaled,
-                    y_valid=y_test.astype(int), eval_metric=roc_auc_score)
-```
-
-
-```python
-model.best_performance
-```
-
-## 4. Random forests
-
-
-```python
-from sklearn.ensemble import RandomForestClassifier
-```
-
-
-```python
-clf = RandomForestClassifier(bootstrap=True, class_weight=None, criterion='gini',
-            max_depth=2, max_features='auto', max_leaf_nodes=None,
-            min_impurity_decrease=0.0, min_impurity_split=None,
-            min_samples_leaf=1, min_samples_split=2,
-            min_weight_fraction_leaf=0.0, n_estimators=100, n_jobs=None,
-            oob_score=False, random_state=0, verbose=0, warm_start=False)
-
-
-RF = Pipeline([('RF', clf)])
-
-bootstraps = [True, False]
-max_depths = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, None]
-max_features = ['auto', 'sqrt']
-min_samples_leafs = [1, 2, 4]
-min_samples_splits = [2, 5, 10]
-n_estimators = np.arange(10,500,50)
-criteria = ['gini','entropy']
-
-
-parameters = [{'RF__bootstrap': bootstrap,
-               'RF__max_depth': depth,
-               'RF__max_features': feat,
-               'RF__min_samples_leaf': leaf,
-               'RF__min_samples_split': split,
-               'RF__n_estimators': estimators,
-               'RF__criterion': criterion}
-
-              for bootstrap in bootstraps
-              for depth in max_depths
-              for feat in max_features
-              for leaf in min_samples_leafs
-              for split in min_samples_splits
-              for estimators in n_estimators
-              for criterion in criteria]
-
-print('Number of parameters: ' , len(parameters))
-```
-
-
-```python
-#RANDOM SAMPLING
-random_inds = np.random.RandomState(20).randint(0,len(parameters),size=100)
-
-parameters = np.array(parameters)
-random_params = parameters[random_inds]
-
-print('Number of random parameters: ' , len(random_params))
-```
-
-
-```python
-model = ModelTuner(pipeline=RF,parameters=random_params, X_train=X_train_scaled,
-                    y_train=y_train.astype(int), X_valid=X_test_scaled,
-                    y_valid=y_test.astype(int), eval_metric=roc_auc_score)
-```
-
-
-```python
-model.best_performance
-```
-
-## 5. XGBOOST
+## 1. XGBoost
 
 
 ```python
@@ -503,7 +347,7 @@ df_test_sub.to_csv('./Data/codenames_sub_3.csv',index=False)
 ```
 
 
-# B. Deep Neural Networks
+## 2. Deep Neural Networks
 
 
 ```python
@@ -613,6 +457,171 @@ roc_auc_score(y_test,classes)
 
 
     0.9371390379340748
+
+# B. Baseline Models
+
+## 1. Naive Bayes
+
+
+```python
+from sklearn.naive_bayes import GaussianNB
+from sklearn.metrics import roc_auc_score
+```
+
+
+```python
+clf = GaussianNB()
+clf.fit(X_train_scaled, y_train.astype(int))
+y_pred=clf.predict_proba(X_test_scaled)[:, 1]
+clf_roc=roc_auc_score(y_test.astype(int),y_pred)
+clf_roc
+```
+
+## 2. Logistic Regression
+
+
+```python
+from sklearn.pipeline import Pipeline
+from tqdm import tqdm
+
+from sklearn.linear_model import LogisticRegression
+clf = LogisticRegression(random_state=0, solver='lbfgs')
+
+
+LR = Pipeline([('LR', clf)])
+
+penalties = ['l1', 'l2']
+Cs = np.logspace(-4, 1, 20)
+solvers = ['liblinear']
+
+parameters = [{'LR__penalty':penalty, 'LR__C': c, 'LR__solver':solver}
+              for penalty in penalties
+              for c in Cs
+              for solver in solvers]
+
+print('Number of parameters: ' , len(parameters))
+```
+
+
+```python
+model = ModelTuner(pipeline=LR,parameters=parameters[:10], X_train=X_train_scaled,
+                    y_train=y_train.astype(int), X_valid=X_test_scaled,
+                    y_valid=y_test.astype(int), eval_metric=roc_auc_score)
+```
+
+
+```python
+model.best_performance
+```
+
+## 3. SVM
+
+
+```python
+from sklearn import svm
+
+clf = svm.SVC(C=1.0, cache_size=200, class_weight=None, coef0=0.0,
+            decision_function_shape='ovr', degree=3, gamma='scale', kernel='rbf',
+            max_iter=-1, probability=True, random_state=0, shrinking=True,
+            tol=0.001, verbose=False)
+
+
+SVM = Pipeline([('SVM', clf)])
+
+Cs = [0.001, 0.01, 0.1, 1, 10]
+gammas = [0.001, 0.01, 0.1, 1]
+kernels = ['rbf','poly','linear']
+
+
+parameters = [{'SVM__gamma':gamma, 'SVM__C': c, 'SVM__kernel':kernel}
+              for gamma in gammas
+              for c in Cs
+              for kernel in kernels]
+
+print('Number of parameters: ' , len(parameters))
+```
+
+
+```python
+model = ModelTuner(pipeline=SVM,parameters=parameters[:5], X_train=X_train_scaled,
+                    y_train=y_train.astype(int), X_valid=X_test_scaled,
+                    y_valid=y_test.astype(int), eval_metric=roc_auc_score)
+```
+
+
+```python
+model.best_performance
+```
+
+## 4. Random forests
+
+
+```python
+from sklearn.ensemble import RandomForestClassifier
+```
+
+
+```python
+clf = RandomForestClassifier(bootstrap=True, class_weight=None, criterion='gini',
+            max_depth=2, max_features='auto', max_leaf_nodes=None,
+            min_impurity_decrease=0.0, min_impurity_split=None,
+            min_samples_leaf=1, min_samples_split=2,
+            min_weight_fraction_leaf=0.0, n_estimators=100, n_jobs=None,
+            oob_score=False, random_state=0, verbose=0, warm_start=False)
+
+
+RF = Pipeline([('RF', clf)])
+
+bootstraps = [True, False]
+max_depths = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, None]
+max_features = ['auto', 'sqrt']
+min_samples_leafs = [1, 2, 4]
+min_samples_splits = [2, 5, 10]
+n_estimators = np.arange(10,500,50)
+criteria = ['gini','entropy']
+
+
+parameters = [{'RF__bootstrap': bootstrap,
+               'RF__max_depth': depth,
+               'RF__max_features': feat,
+               'RF__min_samples_leaf': leaf,
+               'RF__min_samples_split': split,
+               'RF__n_estimators': estimators,
+               'RF__criterion': criterion}
+
+              for bootstrap in bootstraps
+              for depth in max_depths
+              for feat in max_features
+              for leaf in min_samples_leafs
+              for split in min_samples_splits
+              for estimators in n_estimators
+              for criterion in criteria]
+
+print('Number of parameters: ' , len(parameters))
+```
+
+
+```python
+#RANDOM SAMPLING
+random_inds = np.random.RandomState(20).randint(0,len(parameters),size=100)
+
+parameters = np.array(parameters)
+random_params = parameters[random_inds]
+
+print('Number of random parameters: ' , len(random_params))
+```
+
+
+```python
+model = ModelTuner(pipeline=RF,parameters=random_params, X_train=X_train_scaled,
+                    y_train=y_train.astype(int), X_valid=X_test_scaled,
+                    y_valid=y_test.astype(int), eval_metric=roc_auc_score)
+```
+
+
+```python
+model.best_performance
+```
 
 
 
