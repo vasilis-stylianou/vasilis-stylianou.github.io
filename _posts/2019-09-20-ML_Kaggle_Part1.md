@@ -3955,11 +3955,16 @@ B.
 
 ## Step 2: Feature Engineering
 2.1 Which Datetime Feats to add: select manually
+
 2.2.1 Which Card-Address Interaction Feats to add: : select manually
+
 2.2.2 Which Card-Address-Datetime Interaction Feats to add:
-- period_feats (list)<br>
-- card_addr_feats (list)<br>
+
+- period_feats (list)
+- card_addr_feats (list)
+
 2.3 Which Aggregated TransAmt Feats to add: select manually
+
 2.4 Which Frequency Feats to add: select manually
 
 ## Step 3: Preprocessing and Feature Selection
