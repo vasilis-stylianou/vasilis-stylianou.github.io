@@ -3180,8 +3180,7 @@ for chunk in tqdm_notebook(np.array_split(df_all, 200)):
                                     continuous=num_cols)
 
     temp_df = temp_df.append(df_all_compl,ignore_index=True)
-
-```python
+    
 temp_df[cols].head(3)
 ```
 <div>
