@@ -3873,45 +3873,24 @@ df_all['pca_error'] = PCAT.rec_error(X_train_scaled).reshape(-1,1)
 
 ```python
 df_train_dummy = df_all.iloc[:len(df_fraud),:].copy()
+df_test = df_all.loc[len(df_fraud):,x_cols].copy()
 ```
-
 
 ```python
 x_cols = [col for col in df_train_dummy.columns.tolist() if col not in ['TransactionID','isFraud']]
 y_col = 'isFraud'
-```
 
-
-```python
 #define X and y of df_train
-
 X, y = df_train_dummy.loc[:,x_cols].values, df_train.loc[:,y_col].values
 
 X_train, X_test, y_train, y_test = getStratifiedTrainTestSplit(X,y,frac=0.2,n_splits=1,
                                                                 random_state=0)
 ```
 
-
-```python
-#df's shapes
-
-for i in [X_train, X_test, y_train, y_test]:
-    print(i.shape)
-```
-
-
-```python
-df_test = df_all.loc[len(df_fraud):,x_cols].copy()
-df_test.shape
-```
-
 ## 3.5 Save Analyzed Data
-
-
 ```python
 from pickleObjects import *
 ```
-
 
 ```python
 path = './Data/'
@@ -3942,8 +3921,11 @@ Select manually:
 2.4 Which Frequency Feats to add?
 
 ## Step 3: Preprocessing and Feature Selection
-Numerical_categorical split: min_categories (parameter)
-3.1 Number of highly correlated features: corr_cut_off (parameter)
-3.2 Method of treating categorical feats: how = {'dummies','label_enc'}
-3.3 (PCA)
-3.4. Stratified split parameters: frac, n_splits
+
+3.1 Set the cut-off value ```corr_cut_off``` for highly correlated features.
+
+3.2 Select method of treating categorical features: ```how = {'dummies','label_enc'}```.
+
+3.3 Choose number of principal components in ```PCATransformer```.
+
+3.4. Select stratified split parameters: ```frac, n_splits```.
