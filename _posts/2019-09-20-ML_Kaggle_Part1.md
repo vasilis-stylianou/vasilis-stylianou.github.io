@@ -3777,40 +3777,28 @@ freq_feats = addFrequencyFeats(df_all,cols=try_cols);
 ```
 Putting everything together:
 ```python
-new_cols = period_feats + card_addr_feats + card_date_feats + agg_feats + freq_feats
+engin_cols = period_feats + card_addr_feats + card_date_feats + agg_feats + freq_feats
 ```
 
 # Step 3: Preprocessing and Feature Selection
 
 
 ```python
+#
 df_fraud = pd.read_csv('./Data/train_transaction.csv',usecols = ['isFraud'])
-```
 
-
-```python
+#
 df_train = df_all.iloc[:len(df_fraud),:].copy()
-```
 
-
-```python
-df_train.head(3)
-```
-
-
-```python
+#
 df_train['isFraud'] = df_fraud['isFraud'].values
 ```
-
 
 ```python
 all_vars = TableDescriptor(df_train,'All_data','isFraud')
 ```
 
 ## 3.1 Filter Features by Correlation to target
-
-
-
 
 ```python
 #convert cat cols to cat vars
