@@ -5,8 +5,10 @@ tags: [machine learning, sklearn, keras, XGBoost, Neural Networks]
 excerpt: sklearn, keras, XGBoost, Neural Networks
 ---
 
+# Intro:
 
 
+## Libraries
 ```python
 import numpy as np
 import pandas as pd
@@ -18,15 +20,31 @@ pd.set_option('display.max_columns', 500)
 pd.set_option('display.width', 1000)
 ```
 
-# Load data
-
+## Pipelines
 
 ```python
-from pickleObjects import *
+from sklearn.pipeline import Pipeline
+from tqdm import tqdm
+
+class ModelTuner:
+    def __init__(self,pipeline,parameters,X_train,y_train,X_valid,y_valid,eval_metric):
+        self.pipeline = pipeline
+        self.parameters = parameters
+        self.predictions = [pipeline.set_params(**params).fit(X_train, y_train)\
+                                    .predict_proba(X_valid)[:,1] for params in tqdm(parameters)]
+        self.performance = [eval_metric(y_valid,prediction) for prediction in self.predictions]
+        self.best_params = self.parameters[np.argmax(self.performance)]
+        self.best_model = pipeline.set_params(**self.best_params).fit(X_train, y_train)
+        self.best_performance = np.max(self.performance)
 ```
 
 
+
+
+## Load data
+
 ```python
+from pickleObjects import *
 path = './Data/'
 
 X_train, X_test, y_train, y_test = loadObjects(path+'X_train'),loadObjects(path+'X_test'),loadObjects(path+'y_train'),loadObjects(path+'y_test')
@@ -63,7 +81,7 @@ np.bincount(y_test.astype(int))
 
 
 
-# Scale Data
+## Scale Data
 
 
 ```python
@@ -596,3 +614,7 @@ roc_auc_score(y_test,classes)
 
 
     0.9371390379340748
+
+
+
+# C. Summary
