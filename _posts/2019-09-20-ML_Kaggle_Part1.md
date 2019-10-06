@@ -6,7 +6,7 @@ excerpt: Machine Learning, Feature Engineering, pandas, numpy
 ---
 
 # Intro:
-The following work was done during the Kaggle competition -  [IEEE-CIS Fraud Detection](https://www.kaggle.com/c/ieee-fraud-detection). Contestants were provided with the following four datasets, from Vesta Corporation:
+The following work was done for the Kaggle competition -  [IEEE-CIS Fraud Detection](https://www.kaggle.com/c/ieee-fraud-detection). Contestants were provided with four datasets, from Vesta Corporation:
 - train_{transaction, identity}.csv - the training set
 - test_{transaction, identity}.csv - the test set
 
@@ -3927,7 +3927,7 @@ Select manually:
 
 2.1 Which Datetime Feats to add?
 
-2.2 Which Card-Address and/or Card-Address-Datetime Interactions to add? 
+2.2 Which Card-Address and/or Card-Address-Datetime Interactions to add?
 
 2.3 Which Aggregated TransactionAmt Feats to add?
 
