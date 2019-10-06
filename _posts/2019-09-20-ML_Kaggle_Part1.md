@@ -3840,12 +3840,14 @@ print_null_cols(df_all)
 
 ## 3.3 PCA & Reconstruction Error
 
-Before we split the train data we can actually add one more feature using Principal Component Analysis (PCA). Now the main idea behind PCA is to find a matrix transformation under which the features transform into a new set of features, the principal components, which are as uncorrelated as possible. Once such a matrix transformation is learned, one can apply the inverse transformation on the principal components to get back the original set of features. In doing so though, the inverse transformation will return the values of the original features slightly modified. This difference between the input values and those obtained after the inverse transformation is called the reconstruction error.
+Before we split the train data we can actually add one more feature using Principal Component Analysis (PCA). Recall that the main idea behind PCA is to find an orthogonal matrix transformation under which the features transform into a new set of features, the principal components, which are as uncorrelated as possible. The order at which the principal components are learned represents their statistical significance, with the first principal component having the largest possible variance and each succeeding component in turn having the highest variance possible while being orthogonal to the preceding components.
+At last, once such a matrix transformation is learned, one can apply the inverse transformation on the principal components to get back the original set of features.
 
-We can therefore use PCA to assign a reconstruction error to each train sample; we expect that  distinguish samples with high reconstruction error
+One thing we can tune is the number of principal components that we wish our algorithm to learn. In particular, we can choose that number to be slightly lower than the number of input features. In doing so though, the inverse transformation will return the values of the original features slightly modified. This difference between the input values and those obtained after the inverse transformation is called the reconstruction error.
 
+Now since only 3.5% of the train samples are fraudulent, we expect the fraudulent samples to cause minimal variance to the dataset and therefore the PCA transformation should map them to the values of principal components of lower statistical significance. We can therefore use PCA to learn a transformation which maps, say ```N```, input features to say ```floor(0.99 N)``` principal components (i.e. drop some lowest principal components) and then use the inverse transformation to assign a reconstruction error to each train sample; we expect fraudulent samples to be assigned the highest reconstruction error.
 
-Such a transformation relies on minimizing the
+Let use our class ```PCATransformer``` in ```fraud_pre_proc.py``` to engineer this new feature.   
 
 ```python
 # feature scalingmodel.best_performance
