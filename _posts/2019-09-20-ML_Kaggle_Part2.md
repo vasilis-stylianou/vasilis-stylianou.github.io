@@ -6,13 +6,13 @@ excerpt: sklearn, keras, XGBoost, Neural Networks
 ---
 
 # Intro:
-Recall that in the previous post I set up the problem of predicting fraudulent card transactions for the Kaggle competition: [IEEE-CIS Fraud Detection](https://www.kaggle.com/c/ieee-fraud-detection). In particular I split this problem into four steps:
+Recall that in the previous [post](https://vasilis-stylianou.github.io/ML_Kaggle_Part1/) I set up the problem of predicting fraudulent card transactions for the Kaggle competition: [IEEE-CIS Fraud Detection](https://www.kaggle.com/c/ieee-fraud-detection). In particular I split this problem into four steps:
 1. Data Cleaning
 2. Feature Engineering
 3. Feature Selection and Preprocessing
 4. Model Training/Evaluation/Selection
 
-In [Part I](https://vasilis-stylianou.github.io/ML_Kaggle_Part1/) I covered the first three steps. In this post I discuss the last step.
+and covered the first three steps. In this post I discuss the last step.
 
 # Step 4: Model Training/Evaluation/Selection
 ## Libraries
