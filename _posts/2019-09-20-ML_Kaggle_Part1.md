@@ -3730,8 +3730,10 @@ All feature-engineering methods used in this post are contained in the python sc
 from fraud_feat_engineering import *
 ```
 
+
+
 ## 2.1 Datetime Features
-The fist set of engineered features are extracted from the timedeltas in the column called ```TransactionDT```.
+The fist set of engineered features are extracted from the timedelta's in the column called ```TransactionDT```.
 ```python
 period_feats=addDatetimeFeats(df_all)
 period_feats
