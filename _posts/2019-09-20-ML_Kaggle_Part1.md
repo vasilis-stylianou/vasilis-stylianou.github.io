@@ -3724,7 +3724,7 @@ df_all = temp_df[cols].copy()
 
 # Step 2: Feature Engineering
 
-To this end we would like to extend our set of features by engineering some new ones. This process will allow us to isolate some key information from the existing features, and even highlight various patterns.
+Next we would like to extend our set of features by engineering some new ones. This process will allow us to isolate some key information from the existing features, and even highlight various patterns.
 All feature-engineering methods used in this post are contained in the python script  ```fraud_feat_engineering.py```.
 ```python
 from fraud_feat_engineering import *
@@ -3777,44 +3777,50 @@ freq_feats = addFrequencyFeats(df_all,cols=try_cols);
 ```
 
 # Step 3: Preprocessing and Feature Selection
-
+To begin our preprocessing we need to combine the target column ```isFraud``` with the train data ```df_train```.
 
 ```python
-#
+# Import labels
 df_fraud = pd.read_csv('./Data/train_transaction.csv',usecols = ['isFraud'])
 
-#
+# Select only train data
 df_train = df_all.iloc[:len(df_fraud),:].copy()
 
-#
+# Add isFraud col to train data
 df_train['isFraud'] = df_fraud['isFraud'].values
 ```
 
+## 3.1 Filter Features by Correlation to target
+To this end, we would like to filter out all those features which are weakly correlated to the target variables in ```isFraud```. We will use the ```getCorrelatedFeatures``` method in ```fraud_pre_proc.py```.
 ```python
+# Generate a list of Variable objects
 all_vars = TableDescriptor(df_train,'All_data','isFraud')
 ```
 
-## 3.1 Filter Features by Correlation to target
-
 ```python
-#convert cat cols to cat vars
+# Convert numerical cols to numerical vars
 numerical_vars = [var for var in all_vars.variables if var.name in num_cols+new_cols]
-#select high-correlated cat vars
+
+# Select high-correlated num vars
 num_vars = getCorrelatedFeatures(numerical_vars,corr_cut_off=0.005)
-#list of high-correlated cat cols
+
+# Create a list of high-correlated num cols
 new_num_cols = [var.name for var in num_vars]
 ```
-
+    Selected features: 41/60
 
 ```python
-#convert cat cols to cat vars
+# Convert categorical cols to cat vars
 categorical_vars = [var for var in all_vars.variables if var.name in cat_cols]
-#select high-correlated cat vars
+
+# Select high-correlated cat vars
 cat_vars = getCorrelatedFeatures(categorical_vars,corr_cut_off=0.1)
-#list of high-correlated cat cols
+
+# Create a list of high-correlated cat cols
 new_cat_cols = [var.name for var in cat_vars]
 ```
-
+    Selected features: 18/42
+    
 ## 3.2. Convert categorical data to Dummies or Codes
 
 
