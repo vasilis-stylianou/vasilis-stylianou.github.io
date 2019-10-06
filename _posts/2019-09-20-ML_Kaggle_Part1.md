@@ -97,7 +97,7 @@ class TableDescriptor:
         self.variables = [Variable(df[col],col,
                                     label=self.label) for col in tqdm(df.columns)]
 ```
-From now on, we refer the reader to the python script ```fraud_pre_proc``` for all the user-defined classes (and methods) which help for data cleaning and preprocessing.
+From now on, we refer the reader to the python script ```fraud_pre_proc.py``` for all the user-defined classes (and methods) which help for data cleaning and preprocessing.
 
 ```python
 from fraud_pre_proc import *
@@ -111,7 +111,7 @@ from fraud_pre_proc import *
 df_train_trans = import_data('./Data/train_transaction.csv')
 df_test_trans = import_data('./Data/test_transaction.csv')
 ```
-Here ```import_data``` is a method in ```fraud_pre_proc``` which creates a pandas dataframe and reduces its memory usage by ~60%.
+Here ```import_data``` is a method in ```fraud_pre_proc.py``` which creates a pandas dataframe and reduces its memory usage by ~60%.
 
 ```python
 df_train_trans.head(3)
@@ -3725,7 +3725,7 @@ df_all = temp_df[cols].copy()
 # Step 2: Feature Engineering
 
 To this end we would like to extend our set of features by engineering some new ones. This process will allow us to isolate some key information from the existing features, and even highlight various patterns.
-All feature-engineering methods used in this post are contained in the python script  ```fraud_feat_engineering```.
+All feature-engineering methods used in this post are contained in the python script  ```fraud_feat_engineering.py```.
 ```python
 from fraud_feat_engineering import *
 ```
@@ -3741,65 +3741,43 @@ period_feats
     ['month','week','yearday','hour','weekday','day']
 
 The ```addDatetimeFeats``` method converts the timedelta's of ```TransactionDT``` to datetime objects and adds datetime-like columns to ```df_all``` whose names are returned in a python list.
+
 ## 2.2 Interaction Features
-
-
+The second type of features is obtained by adding the values of ```card_``` and ```addr_``` columns.
 ```python
-#B.1 Add Interaction Features by ADDING the values of card_ and addr_ columns
-card_addr_interactions = addCardAddressInteractionFeats(df_all)
+card_addr_feats = addCardAddressInteractionFeats(df_all)
+card_addr_feats
 ```
+    ['card12','card1235','card1235_addr12']
 
-
+We can also add interactions among the ```card_``` columns and ```period_feats```.
 ```python
-df_all[card_addr_interactions].head(3)
-```
-
-
-```python
-card_addr_feats = card_addr_interactions + ['card1','card2','card3','card5']
-```
-
-
-```python
-#B.2 Add interaction features by ADDING the values of card_addr_feats and period_feats
-#   and computing value frequencies
-new_feats = addDatetimeInteractionFeats(df_all, cols=card_addr_feats, period_cols=period_feats);
+card_addr_all = card_addr_feats + ['card1','card2','card3','card5']
+card_date_feats = addDatetimeInteractionFeats(df_all, cols=card_addr_all, period_cols=period_feats);
+card_date_feats;
 ```
 
 ## 2.3 Aggregated Features
-
-
+Another type of features we can add are aggregations of the ```TransactionAmt``` column by grouping-by with ```card_addr_feats``` and computing the mean and std.
 ```python
-cards = ['card1','card2','card3','card5']
-```
-
-
-```python
-# Add aggregated features by grouping-by card_addr_feats and computing the mean & STD of 'TransactionAmt'
-agg_feats = addAggTransAmtFeats(df_all,cols=cards);
+agg_feats = addAggTransAmtFeats(df_all,cols=card_addr_feats);
 ```
 
 ### 2.4. Indicator/Frequency Features
-
-
+At last we can add features which contain the value counts of the input columns
 ```python
-try_cols = cards + ['C1','C2','C3','C4','C5','C6','C7','C8','C9','C10','C11','C12','C13','C14',
-        'D1','D2','D3','D4','D5','D6','D7','D8',
-        'addr1','addr2',
-        'dist1','dist2',
-        'P_emaildomain', 'R_emaildomain',
-        'DeviceInfo','DeviceType',
-        'id_30','id_33']
-```
-
-
-```python
-# Add indicator features by computing the value frequencies of try_cols
+try_cols = card_addr_feats \
+          + ['C{}'.format(i) for i in range(1,15)] \
+          + ['D{}'.format(i) for i in range(1,9)] \
+          + ['addr1','addr2','dist1','dist2'] \
+          + ['P_emaildomain', 'R_emaildomain'] \
+          + ['DeviceInfo','DeviceType'] \
+          + ['id_30','id_33']
 freq_feats = addFrequencyFeats(df_all,cols=try_cols);
 ```
-
+Putting everything together:
 ```python
-new_cols = period_feats + agg_feats + freq_feats
+new_cols = period_feats + card_addr_feats + card_date_feats + agg_feats + freq_feats
 ```
 
 # Step 3: Preprocessing and Feature Selection
