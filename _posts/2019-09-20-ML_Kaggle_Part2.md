@@ -77,7 +77,7 @@ X_train_scaled=scaler.transform(X_train)
 X_test_scaled=scaler.transform(X_test)
 ```
 
-# Machine learning models
+# A. Machine Learning Models
 
 ## 1. Naive Bayes
 
@@ -337,7 +337,7 @@ model.best_performance
 
 
 
-    0.9343498270146494
+    0.9573498270146494
 
 
 
@@ -486,7 +486,7 @@ df_test_sub.to_csv('./Data/codenames_sub_3.csv',index=False)
 ```
 
 
-## 1. Deep Neural Net
+# B. Deep Neural Networks
 
 
 ```python
@@ -595,4 +595,4 @@ roc_auc_score(y_test,classes)
 
 
 
-    0.8771390379340748
+    0.9371390379340748
