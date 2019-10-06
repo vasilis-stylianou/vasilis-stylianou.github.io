@@ -27,7 +27,7 @@ pd.set_option('display.width', 1000)
 ```
 
 ## Pipelines
-
+Before we start building any models it is useful to create the following class to pipeline our model training and hyperparameter tuning:
 ```python
 from sklearn.pipeline import Pipeline
 from tqdm import tqdm
@@ -48,6 +48,7 @@ class ModelTuner:
 
 
 ## Load data
+Recall that the preprocessed train/test sets were saved as numpy arrays in our github repository.
 
 ```python
 from pickleObjects import *
@@ -63,7 +64,7 @@ X_train, X_test, y_train, y_test = loadObjects(path+'X_train'),loadObjects(path+
     Object loaded!
 
 
-
+Let us count the number of non-fraud/fraud samples in the target sets.
 ```python
 np.bincount(y_train.astype(int))
 ```
@@ -161,7 +162,7 @@ print('Number of parameters: ' , len(parameters))
 
 
 ```python
-#RANDOM SAMPLING
+#Use random sampling to expedite model trainin/selection
 random_inds = np.unique(np.random.RandomState(20)\
                 .randint(0,len(parameters),size=20))
 
@@ -172,12 +173,6 @@ print('Number of random parameters: ' , len(random_params))
 ```
 
     Number of random parameters:  20
-
-
-
-```python
-#indices = np.random.RandomState(30).randint(0,X_train_scaled.shape[0],size=10000)
-```
 
 
 ```python
@@ -265,7 +260,7 @@ X_test_sub_scaled = scaler.transform(X_test_sub)
 y_preds = model.best_model.predict_proba(X_test_sub_scaled)[:,1]
 ```
 
-# Submission file
+## Submission file
 
 
 ```python
