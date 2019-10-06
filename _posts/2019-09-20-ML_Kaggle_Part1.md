@@ -3775,10 +3775,6 @@ try_cols = card_addr_feats \
           + ['id_30','id_33']
 freq_feats = addFrequencyFeats(df_all,cols=try_cols);
 ```
-Putting everything together:
-```python
-engin_cols = period_feats + card_addr_feats + card_date_feats + agg_feats + freq_feats
-```
 
 # Step 3: Preprocessing and Feature Selection
 
@@ -3923,24 +3919,19 @@ dumpObjects(df_test.values,path+'X_test_submission')
 # Summary: The Tuning Knobs
 
 ## Step 1: Data Cleaning
-A. Number of low NaN-rate features: nans_rate_cut_off (parameter)
-B.
-- Numerical_categorical split: min_categories (parameter)
-- Methods to fill NaNs: Vasilis or Papes
+- Set the cut-off value ```nans_rate_cut_off``` for the percent of NaNs in a column.
+- Set the min value ```min_categories``` of unique values in a columns, used for classifying a numerical-type column as categorical.
 
 ## Step 2: Feature Engineering
-2.1 Which Datetime Feats to add: select manually
+Select manually:
 
-2.2.1 Which Card-Address Interaction Feats to add: : select manually
+2.1 Which Datetime Feats to add?
 
-2.2.2 Which Card-Address-Datetime Interaction Feats to add:
+2.2 Which Card-Address and/or Card-Address-Datetime Interactions to add? 
 
-- period_feats (list)
-- card_addr_feats (list)
+2.3 Which Aggregated TransactionAmt Feats to add?
 
-2.3 Which Aggregated TransAmt Feats to add: select manually
-
-2.4 Which Frequency Feats to add: select manually
+2.4 Which Frequency Feats to add?
 
 ## Step 3: Preprocessing and Feature Selection
 Numerical_categorical split: min_categories (parameter)
