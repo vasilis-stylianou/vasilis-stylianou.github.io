@@ -3,6 +3,7 @@ title: "Machine Learning (Kaggle): Part I"
 date: 2019-09-20
 tags: [machine learning, Imputation, PCA, OOP, Feature Engineering, pandas, numpy]
 excerpt: OOP, Imputation, Feature Engineering, PCA
+mathjax: "true"
 ---
 
 # Intro:
@@ -3933,4 +3934,4 @@ Select manually:
 3.4. Select stratified split parameters: ```frac, n_splits```.
 
 
-$$ x+y =z^2$$ 
+$$ x+y =z^2$$
