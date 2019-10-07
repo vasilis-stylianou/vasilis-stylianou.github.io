@@ -3931,3 +3931,6 @@ Select manually:
 3.3 Choose number of principal components in ```PCATransformer```.
 
 3.4. Select stratified split parameters: ```frac, n_splits```.
+
+
+$$ x+y =z^2$$ 
