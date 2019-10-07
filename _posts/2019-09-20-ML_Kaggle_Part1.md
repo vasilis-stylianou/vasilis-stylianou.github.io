@@ -3934,4 +3934,4 @@ Select manually:
 3.4. Select stratified split parameters: ```frac, n_splits```.
 
 
-$$ x+y =z^2$$
+$$ x+y = z$$
