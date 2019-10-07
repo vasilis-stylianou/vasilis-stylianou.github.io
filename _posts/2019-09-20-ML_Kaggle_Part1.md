@@ -3870,7 +3870,7 @@ PCAT = PCATransformer(X_train_scaled)
 df_all['pca_error'] = PCAT.rec_error(X_train_scaled).reshape(-1,1)
 ```
 
-# 3.4. Stratified Split training and validation data
+## 3.4. Stratified Split training and validation data
 
 
 ```python
