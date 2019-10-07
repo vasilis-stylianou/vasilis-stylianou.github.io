@@ -21,7 +21,7 @@ and were asked to predict the probability of a card transaction being fraudulent
 In this post I discuss steps 1-3.
 
 Note:
-- By the completion of this project the code was distributed among a number of python scripts and jupyter notebooks. In this post I have concatenated everything together but for the sake of brevity I left out some of the utility scripts, and I refer the reader to my github repository for more details.
+- By the completion of this project the code was distributed among a number of python scripts and jupyter notebooks. In this post I have concatenated everything together but for the sake of brevity I left out some of the utility scripts, and I refer the reader to my [github](https://github.com/vasilis-stylianou/Data-Science/tree/master/Projects/Kaggle_IEEE_Fraud) repository for more details.
 - This work was done in collaboration with Panayiotis Petousis and was submitted under the team name: Codenames.
 
 # Step 1: Data Cleaning
