@@ -618,4 +618,4 @@ model.best_performance;
 
 # Discussion
 
-During the training phase we had to sacrifice some fraction of the data in order to speed up training, and hence hyperparameter tuning. We did that by either decreasing the NaN-rate and/or correlation cut-off parameters, and/or adding less engineered features (see summary of previous the previous [post](https://vasilis-stylianou.github.io/ML_Kaggle_Part1/)). In principle one could achieve a higher ROC score by spending more time in the Feature Selection - Training - Evaluation cycle. 
+During the training phase we had to sacrifice some fraction of the data in order to speed up training, and hence hyperparameter tuning. We did that by either decreasing the NaN-rate and/or correlation cut-off parameters, and/or adding less engineered features (see summary of previous the previous [post](https://vasilis-stylianou.github.io/ML_Kaggle_Part1/)). In principle one could achieve a higher ROC score by spending more time in the Feature Selection - Training - Evaluation cycle.
