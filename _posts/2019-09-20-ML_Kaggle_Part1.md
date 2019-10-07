@@ -6,7 +6,7 @@ excerpt: OOP, Imputation, Feature Engineering, PCA
 ---
 
 # Intro:
-The following work was done for the Kaggle competition -  [IEEE-CIS Fraud Detection](https://www.kaggle.com/c/ieee-fraud-detection). Contestants were provided with four datasets, from Vesta Corporation:
+The following work was done for the Kaggle competition: [IEEE-CIS Fraud Detection](https://www.kaggle.com/c/ieee-fraud-detection). Contestants were provided with four datasets, from Vesta Corporation:
 - train_{transaction, identity}.csv - the training set
 - test_{transaction, identity}.csv - the test set
 
@@ -20,7 +20,9 @@ and were asked to predict the probability of a card transaction being fraudulent
 
 In this post I discuss steps 1-3.
 
-Note: By the completion of this project the code was distributed among a number of python scripts and jupyter notebooks. In this post I have concatenated everything together but for the sake of brevity I left out some of the utility scripts, and I refer the reader to my github repository for more details.
+Note:
+- By the completion of this project the code was distributed among a number of python scripts and jupyter notebooks. In this post I have concatenated everything together but for the sake of brevity I left out some of the utility scripts, and I refer the reader to my github repository for more details.
+- This work was done in collaboration with Panayiotis Petousis and was submitted under the team name: Codenames.
 
 # Step 1: Data Cleaning
 
