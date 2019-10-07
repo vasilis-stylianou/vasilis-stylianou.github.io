@@ -106,7 +106,7 @@ X_test_scaled=scaler.transform(X_test)
 
 
 ## 1. XGBoost
-
+After a lot of iterations of Feature Selection - Training - Evaluation we found the XGBoost classifier to be the most accurate model.
 
 ```python
 from xgboost import XGBClassifier
@@ -344,12 +344,7 @@ df_test_sub.to_csv('./Data/codenames_sub_3.csv',index=False)
 
 
 ## 2. Deep Neural Networks
-
-
-```python
-from sklearn.metrics import roc_auc_score
-```
-
+It's worth mentioning that Deep learning gave us the second best model. The Neural Network we built was a sequence of layers of decreasing units, obeying the "rule of thumb": decrease the number of units by half at each layer.
 
 ```python
 import keras
@@ -455,6 +450,7 @@ roc_auc_score(y_test,classes)
     0.9371390379340748
 
 # B. Baseline Models
+The following models were used as a benchmark during model evaluation.
 
 ## 1. Naive Bayes
 
@@ -470,7 +466,6 @@ clf = GaussianNB()
 clf.fit(X_train_scaled, y_train.astype(int))
 y_pred=clf.predict_proba(X_test_scaled)[:, 1]
 clf_roc=roc_auc_score(y_test.astype(int),y_pred)
-clf_roc
 ```
 
 ## 2. Logistic Regression
@@ -507,7 +502,7 @@ model = ModelTuner(pipeline=LR,parameters=parameters[:10], X_train=X_train_scale
 
 
 ```python
-model.best_performance
+model.best_performance;
 ```
 
 ## 3. SVM
@@ -546,7 +541,7 @@ model = ModelTuner(pipeline=SVM,parameters=parameters[:5], X_train=X_train_scale
 
 
 ```python
-model.best_performance
+model.best_performance;
 ```
 
 ## 4. Random forests
@@ -616,7 +611,7 @@ model = ModelTuner(pipeline=RF,parameters=random_params, X_train=X_train_scaled,
 
 
 ```python
-model.best_performance
+model.best_performance;
 ```
 
 
