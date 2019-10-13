@@ -376,7 +376,12 @@ print("Avg Annual Expenditure (2010-2016) = ${:,.2f}".format(avg_annual_expendit
     Avg Annual Expenditure (2010-2016) = $1,230,258,512.37
 
 
-### 4. Find the 'OFFICE' with the highest total expenditures with a 'START DATE' in 2016. For this office, find the 'PURPOSE' that accounts for the highest total expenditures. What fraction of the total expenditures (all records, all offices) with a 'START DATE' in 2016 do these expenditures amount to?
+Next, we find the 'OFFICE' with the highest total expenditures with a 'START DATE' in 2016. For this office, we find the 'PURPOSE' that accounts for the highest total expenditures. At last, we compute the fraction of the total expenditures (all records, all offices) with a 'START DATE' in 2016 that these expenditures amount to. We split these computations in four steps:
+1. Compute expenditures of ALL offices in 2016.
+2. Find office w/ max total expenditures in 2016.
+3. Find purpose w/ max total expenditures for office w/ max expenditures.
+4. Compute fraction of total expenditure.
+
 
 
 ```python
@@ -460,7 +465,7 @@ print("Fraction of 'Max Purpose' of total expenditures = {}"\
     Fraction of 'Max Purpose' of total expenditures = 0.06585479916213956
 
 
-### 5. What was the highest average staff salary among all representatives in 2016? Assume staff sizes is equal to the number of unique payees in the 'PERSONNEL COMPENSATION' category for each representative.
+Our final task is  to find the highest average staff salary among all representatives in 2016? We shall assume that staff sizes are equal to the number of unique payees in the 'PERSONNEL COMPENSATION' category for each representative.
 
 
 ```python
