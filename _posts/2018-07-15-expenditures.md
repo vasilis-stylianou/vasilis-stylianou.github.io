@@ -465,7 +465,7 @@ print("Fraction of 'Max Purpose' of total expenditures = {}"\
     Fraction of 'Max Purpose' of total expenditures = 0.06585479916213956
 
 
-Our final task is  to find the highest average staff salary among all representatives in 2016? We shall assume that staff sizes are equal to the number of unique payees in the 'PERSONNEL COMPENSATION' category for each representative.
+Lastly, let us to find the highest average staff salary among all representatives in 2016. We shall assume that staff sizes are equal to the number of unique payees in the 'PERSONNEL COMPENSATION' category for each representative.
 
 
 ```python
