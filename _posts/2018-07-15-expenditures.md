@@ -288,7 +288,7 @@ def date_converter(df,date_col):
 
 ```
 ## Data Analysis:
-### 1. What is the total of all the payments in the dataset?
+Let us begin our analysis by computing the total of all the payments in the dataset.
 
 
 ```python
@@ -311,7 +311,7 @@ print("Total of all Payments = ${:,.2f}".format(total_payment()))
     Total of all Payments = $13,660,703,793.31
 
 
-### 2. Define the 'COVERAGE PERIOD' for each payment as the difference (in days) between 'END DATE' and 'START DATE'. What is the standard deviation in 'COVERAGE PERIOD'? Consider only payments with strictly positive amounts.
+Next, we wish to compute the standard deviation in 'COVERAGE PERIOD' for each payment. The 'COVERAGE PERIOD' is defined as the difference (in days) between 'END DATE' and 'START DATE'. (Let us consider only payments with strictly positive amounts.)
 
 
 ```python
@@ -336,7 +336,7 @@ print("STD of Coverage Period = {:,.2f} days".format(std_coverage_period()))
     STD of Coverage Period = 61.41 days
 
 
-### 3. What was the average annual expenditure with a 'START DATE' date between Jan 1, 2010 and Dec 31, 2016 (inclusive)? Consider only payments with strictly positive amounts.
+Let us now compute the average expenditure with a 'START DATE' date between Jan 1, 2010 and Dec 31, 2016 (inclusive). Once again, we shall consider only payments with strictly positive amounts.
 
 
 ```python
