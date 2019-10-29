@@ -6,7 +6,7 @@ excerpt: Data Analysis, Data Science, pandas, numpy
 ---
 ## Intro:
 
-Members of Congress and Congressional offices receive an annual budget to spend on staff, supplies, transportation, and other expenses. Each quarter, representatives report the recipients of their expenditures. ProPublica complies these reports into research-ready CSV files and publishes them [here](https://projects.propublica.org/represent/expenditures). In this post I will study the detailed (not summary) data.
+Members of Congress and Congressional offices receive an annual budget to spend on staff, supplies, transportation, and other expenses. Each quarter, representatives report the recipients of their expenditures. ProPublica complies these reports into research-ready csv files and publishes them [here](https://projects.propublica.org/represent/expenditures). In this post I will study the detailed (not summary) data.
 
 Note: There is an updated version of the 2015Q2 file in the zip archive; use this and discard the original. For convenience I renamed this file to "2015Q2-house-disburse-detail.csv".
 
@@ -16,7 +16,7 @@ import pandas as pd
 import numpy as np
 ```
 
-First of all, observe that the ProPublica CSV files have the name format ```'{year}{quarter}-house-disburse-detail.csv'```. Thus it is convenient to create the following dictionary of file paths:
+First of all, observe that the ProPublica csv files have the name format ```'{year}{quarter}-house-disburse-detail.csv'```. Thus it is convenient to create the following dictionary of file paths:
 
 ```python
 #Generate file paths and store them in dict called paths
@@ -31,7 +31,7 @@ for key in ['2009Q3','2009Q4','2018Q1']:
     paths[key]=path
 paths;
 ```
-We will call the keys/values (year-quarters/file paths) of this dictionary repeatedly throughout our analysis. For instance, let us compute the net memory of all CSV files by iterating through all file paths, creating a pandas dataframe, and adding up the memory usage of all dataframes. 
+We will call the keys/values (year-quarters/file paths) of this dictionary repeatedly throughout our analysis. For instance, let us compute the net memory of all csv files by iterating through all file paths, creating a pandas dataframe, and adding up the memory usage of all dataframes.
 
 ```python
 total_memory=0
@@ -46,9 +46,9 @@ print("Total Memory Usage = {:.2f}GB".format(total_memory/1024**3))
     Total Memory Usage = 3.15GB
 
 
-Let's investigate the data in more detail to see how we should handle memory usage in the following tasks.
+Since we are working locally, let's investigate the data in more detail and think of ways to handle memory usage efficiently in the following tasks.
 
-
+For example, we can take a look at a sample of our data by loading only the data from a single csv file. The self-explanatory keys (year-quarter) of our dictionary ```paths``` come in handy for such isolated data explorations.
 ```python
 #View a sample of data
 sample=pd.read_csv(paths['2011Q2'],engine='python')
@@ -217,7 +217,7 @@ sample.head()
 
 
 
-One can convince oneself that some columns are redundant since either their info is captured by other more informative columns or they don't contain any info at all.  
+Repeating this exploration with other files as well, we come to the conclusion that some columns are redundant since either their info is captured by other more informative columns or they don't contain any info at all. To be more concrete:
 
 
 ```python
@@ -244,8 +244,11 @@ sample.columns.tolist();
 'RECORDID'<br>
 'RECIP (orig.)'
 
+### Comments:
+- In the following tasks we can safely ignore all the columns marked as "redundant". In doing so, we will be able to work with dataframes of significantly reduced memory.
+- To optimize memory usage we will also avoid storing the data contained in the csv files in global variables. (Note that this space saving approach has as a tradeoff the repetition of loading the data within functions.)
 
-## Useful Functions
+## Useful Functions:
 
 A quick inspection of the "AMOUNT", "START DATE" and "END DATE" columns reveals that the corresponding values are not in the right format. In particular, some of the values in the "AMOUNT" column are in string format and need to be converted to numerical values. Similarly the values in the date's columns must be converted to datetime objects (or timestamps). It is therefore convenient to define the following two conversion functions which will use thoroughly throughout our data analysis.
 
@@ -289,6 +292,8 @@ def date_converter(df,date_col):
 
 ```
 ## Data Analysis:
+
+### Task 1:
 Let us begin our analysis by computing the total of all the payments in the dataset.
 
 
