@@ -6,16 +6,17 @@ excerpt: Data Analysis, Data Science, pandas, numpy
 ---
 ## Intro:
 
-Members of Congress and Congressional offices receive an annual budget to spend on staff, supplies, transportation, and other expenses. Each quarter, representatives report the recipients of their expenditures. ProPublica complies these reports into research-ready CSV files and publishes them [here](https://projects.propublica.org/represent/expenditures). We will study the detailed (not summary) data.
+Members of Congress and Congressional offices receive an annual budget to spend on staff, supplies, transportation, and other expenses. Each quarter, representatives report the recipients of their expenditures. ProPublica complies these reports into research-ready CSV files and publishes them [here](https://projects.propublica.org/represent/expenditures). In this post I will study the detailed (not summary) data.
 
 Note: There is an updated version of the 2015Q2 file in the zip archive; use this and discard the original. For convenience I renamed this file to "2015Q2-house-disburse-detail.csv".
 
-
+## Import the data:
 ```python
 import pandas as pd
 import numpy as np
 ```
 
+First of all, observe that the ProPublica CSV files have the name format ```'{year}{quarter}-house-disburse-detail.csv'```. Thus it is convenient to create the following dictionary of file paths:
 
 ```python
 #Generate file paths and store them in dict called paths
@@ -30,7 +31,7 @@ for key in ['2009Q3','2009Q4','2018Q1']:
     paths[key]=path
 paths;
 ```
-
+We will call the keys/values (year-quarters/file paths) of this dictionary repeatedly throughout our analysis. For instance, let us compute the net memory of all CSV files by iterating through all file paths, creating a pandas dataframe, and adding up the memory usage of all dataframes. 
 
 ```python
 total_memory=0
