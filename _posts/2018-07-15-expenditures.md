@@ -294,7 +294,11 @@ def date_converter(df,date_col):
 ## Data Analysis:
 
 ### Task 1:
-Let us begin our analysis by computing the total of all the payments in the dataset.
+Let us begin our analysis by computing the total of all the payments in the dataset. This is easily done by
+- iterating over each file and creating a timeseries for the ```'AMOUNT'``` column
+- converting the values into numerical values by calling the ```amount_numeric_converter``` method
+- summing all the timeseries values and storing them in a temporary variable called ```payment```
+- adding all the payments together to find the total of all payments.
 
 
 ```python
