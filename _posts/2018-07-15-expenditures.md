@@ -250,15 +250,15 @@ sample.columns.tolist();
 
 ## Useful Functions:
 
-A quick inspection of the ```'AMOUNT'```, ```'START DATE'``` and ```'END DATE'``` columns reveals that the corresponding values are not in the right format. In particular, some of the values in the "AMOUNT" column are in string format and need to be converted to numerical values. Similarly the values in the date's columns must be converted to datetime objects (or timestamps). It is therefore convenient to define the following two conversion functions which will use thoroughly throughout our data analysis.
+A quick inspection of the ```'AMOUNT'```, ```'START DATE'``` and ```'END DATE'``` columns reveals that the corresponding values are not in the right format. In particular, some of the values in the ```'AMOUNT'``` column are in string format and need to be converted to numerical values. Similarly the values in the date's columns must be converted to datetime objects (or timestamps). It is therefore convenient to define the following two conversion functions which will use thoroughly throughout our data analysis.
 
 
 ```python
 def amount_numeric_converter(df):
     """
-    Convert column "AMOUNTS" to numerical data
+    Convert column 'AMOUNTS' to numerical data
     Input: a dataframe df
-    Return: the data frame column "AMOUNTS" converted to float
+    Return: the data frame column 'AMOUNTS' converted to float
     """
     if df.AMOUNT.dtype =='float64': pass
     else: df.AMOUNT=df.AMOUNT.str.replace(',','').astype('float')
