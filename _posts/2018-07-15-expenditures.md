@@ -320,7 +320,7 @@ print("Total of all Payments = ${:,.2f}".format(total_payment()))
 
     Total of all Payments = $13,660,703,793.31
 
-
+### Task 2:
 Next, we wish to compute the standard deviation in 'COVERAGE PERIOD' for each payment. The 'COVERAGE PERIOD' is defined as the difference (in days) between 'END DATE' and 'START DATE'. (Let us consider only payments with strictly positive amounts.)
 
 
