@@ -46,7 +46,7 @@ print("Total Memory Usage = {:.2f}GB".format(total_memory/1024**3))
     Total Memory Usage = 3.15GB
 
 
-Since we are working locally, let's investigate the data in more detail and think of ways to handle memory usage efficiently in the following tasks.
+Since we are working locally, let's investigate the data in more detail and think of ways to handle memory usage efficiently.
 
 For example, we can take a look at a sample of our data by loading only the data from a single csv file. The self-explanatory keys (year-quarter) of our dictionary ```paths``` come in handy for such isolated data explorations.
 ```python
@@ -217,7 +217,7 @@ sample.head()
 
 
 
-Repeating this exploration with other files as well, we come to the conclusion that some columns are redundant since either their info is captured by other more informative columns or they don't contain any info at all. To be more concrete:
+Repeating this exploration with other files as well, we come to the conclusion that some columns are redundant since either their info is captured by other more informative columns or they don't contain any info at all. To be more concrete, let us divide the columns into the following two lists:
 
 
 ```python
@@ -236,8 +236,8 @@ sample.columns.tolist();
 'AMOUNT'
 
 #### Redundant:
-'DATE<br>
-'QUARTER <br>
+'DATE'<br>
+'QUARTER' <br>
 'YEAR' <br>
 'TRANSCODE'<br>
 'TRANSCODELONG'<br>
@@ -250,7 +250,7 @@ sample.columns.tolist();
 
 ## Useful Functions:
 
-A quick inspection of the "AMOUNT", "START DATE" and "END DATE" columns reveals that the corresponding values are not in the right format. In particular, some of the values in the "AMOUNT" column are in string format and need to be converted to numerical values. Similarly the values in the date's columns must be converted to datetime objects (or timestamps). It is therefore convenient to define the following two conversion functions which will use thoroughly throughout our data analysis.
+A quick inspection of the ```'AMOUNT'```, ```'START DATE'``` and ```'END DATE'``` columns reveals that the corresponding values are not in the right format. In particular, some of the values in the "AMOUNT" column are in string format and need to be converted to numerical values. Similarly the values in the date's columns must be converted to datetime objects (or timestamps). It is therefore convenient to define the following two conversion functions which will use thoroughly throughout our data analysis.
 
 
 ```python
