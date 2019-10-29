@@ -323,6 +323,14 @@ print("Total of all Payments = ${:,.2f}".format(total_payment()))
 ### Task 2:
 Next, we wish to compute the standard deviation in 'COVERAGE PERIOD' for each payment. The 'COVERAGE PERIOD' is defined as the difference (in days) between 'END DATE' and 'START DATE'. (Let us consider only payments with strictly positive amounts.)
 
+For this task we will write a function which performs the following operations:
+- iterate over all csv files and create a dataframe using only a subset of the dataframe's columns; namely: ```['START DATE','END DATE','AMOUNT']```
+- convert values of ```'AMOUNT'``` to numeric using our helper method
+- slice the dataframe by using a mask of strictly positive amounts
+- convert the date-like columns to datetime objects
+- create a new column called ```'COVERAGE_PERIOD'``` by computing the timedelta of ```'END DATE'``` with ```'START DATE'``` and converting that time difference into days
+- append ???
+
 
 ```python
 def std_coverage_period():
