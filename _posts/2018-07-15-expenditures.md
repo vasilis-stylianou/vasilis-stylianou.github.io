@@ -324,12 +324,14 @@ print("Total of all Payments = ${:,.2f}".format(total_payment()))
 Next, we wish to compute the standard deviation in 'COVERAGE PERIOD' for each payment. The 'COVERAGE PERIOD' is defined as the difference (in days) between 'END DATE' and 'START DATE'. (Let us consider only payments with strictly positive amounts.)
 
 For this task we will write a function which performs the following operations:
+- initialize a numpy array called ```cov_per_data``` to store the coverage periods of each year-quarter
 - iterate over all csv files and create a dataframe using only a subset of the dataframe's columns; namely: ```['START DATE','END DATE','AMOUNT']```
 - convert values of ```'AMOUNT'``` to numeric using our helper method
 - slice the dataframe by using a mask of strictly positive amounts
 - convert the date-like columns to datetime objects
 - create a new column called ```'COVERAGE_PERIOD'``` by computing the timedelta of ```'END DATE'``` with ```'START DATE'``` and converting that time difference into days
-- append ???
+- append the values of ```'COVERAGE_PERIOD'``` for each year-quarter to ```cov_per_data```
+- compute and return the standard deviation of ```cov_per_data```
 
 
 ```python
@@ -353,8 +355,16 @@ print("STD of Coverage Period = {:,.2f} days".format(std_coverage_period()))
 
     STD of Coverage Period = 61.41 days
 
-
-Let us now compute the average expenditure with a 'START DATE' date between Jan 1, 2010 and Dec 31, 2016 (inclusive). Once again, we shall consider only payments with strictly positive amounts.
+### Task 3:
+Let us now compute the average expenditure with a 'START DATE' date between Jan 1, 2010 and Dec 31, 2016 (inclusive). Once again, we shall consider only payments with strictly positive amounts. We will write  function which performs the following series of operations:
+- initialize a list called ```annual_expenditures``` to store the annual expenditures
+- iterate over all files and create a dataframe using the columns ```['START DATE','AMOUNT']```
+- convert the values of ```'START DATE'``` to datetime objects
+- create a new column called ```'START YEAR'``` by extracting the year from the timestamps of ```'START DATE'```
+- select only the data from 2010-2016 and with strictly positive amounts
+- group amounts by year, compute the total expenditure per group and append the resulting dataframe to the list ```annual_expenditures```
+- concatenate all dataframes in ```annual_expenditures``` and compute the net expenditures per year; store the resulting dataframe in ```net_annual_expenditures```
+- compute and return the average annual expenditures using ```net_annual_expenditures```
 
 
 ```python
@@ -393,7 +403,7 @@ print("Avg Annual Expenditure (2010-2016) = ${:,.2f}".format(avg_annual_expendit
 
     Avg Annual Expenditure (2010-2016) = $1,230,258,512.37
 
-
+### Task 4:
 Next, we find the 'OFFICE' with the highest total expenditures with a 'START DATE' in 2016. For this office, we find the 'PURPOSE' that accounts for the highest total expenditures. At last, we compute the fraction of the total expenditures (all records, all offices) with a 'START DATE' in 2016 that these expenditures amount to. We split these computations in four steps:
 1. Compute expenditures of ALL offices in 2016.
 2. Find office w/ max total expenditures in 2016.
@@ -482,8 +492,14 @@ print("Fraction of 'Max Purpose' of total expenditures = {}"\
 
     Fraction of 'Max Purpose' of total expenditures = 0.06585479916213956
 
-
-Lastly, let us to find the highest average staff salary among all representatives in 2016. We shall assume that staff sizes are equal to the number of unique payees in the 'PERSONNEL COMPENSATION' category for each representative.
+### Task 5:
+Lastly, let us to find the highest average staff salary among all representatives in 2016. We shall assume that staff sizes are equal to the number of unique payees in the 'PERSONNEL COMPENSATION' category for each representative. We will split this task in two steps:
+1. Compute a list of all staff salaries:
+  - initialize a list called ```list_staff_salaries``` to store the staff salaries per representative for each year-quarter
+  - iterate over all files and create a dataframe with columns: ```['BIOGUIDE_ID','START DATE','AMOUNT','PAYEE','CATEGORY'```
+  - select rows whose ```'CATEGORY'``` value equals ```'PERSONNEL COMPENSATION'```
+  - select data only from year 2016
+  - compute payees's salaries from each representative
 
 
 ```python
