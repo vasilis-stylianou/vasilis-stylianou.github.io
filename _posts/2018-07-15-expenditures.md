@@ -499,7 +499,12 @@ Lastly, let us to find the highest average staff salary among all representative
   - iterate over all files and create a dataframe with columns: ```['BIOGUIDE_ID','START DATE','AMOUNT','PAYEE','CATEGORY'```
   - select rows whose ```'CATEGORY'``` value equals ```'PERSONNEL COMPENSATION'```
   - select data only from year 2016
-  - compute payees's salaries from each representative
+  - for each year-quarter, compute payees's salaries from each representative and append the resulting dataframe to ```list_staff_salaries```
+  - return ```list_staff_salaries```
+2. Find the highest average staff salary among all representatives in 2016:
+  - iterate over all dataframes ```list_staff_salaries``` and merge them together with an outer join; store the resulting dataframe in ```df_total```
+  - compute the total salary of each payee, group payees by representative and compute the average salary for each representative; store resulting dataframe in ```series_salaries```
+  - find and return the highest average staff salary from ```series_salaries```
 
 
 ```python
