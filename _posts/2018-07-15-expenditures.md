@@ -405,10 +405,10 @@ print("Avg Annual Expenditure (2010-2016) = ${:,.2f}".format(avg_annual_expendit
 
 ### Task 4:
 Next, we find the 'OFFICE' with the highest total expenditures with a 'START DATE' in 2016. For this office, we find the 'PURPOSE' that accounts for the highest total expenditures. At last, we compute the fraction of the total expenditures (all records, all offices) with a 'START DATE' in 2016 that these expenditures amount to. We split these computations in four steps:
-1. Compute expenditures of ALL offices in 2016.
-2. Find office w/ max total expenditures in 2016.
+1. Compute expenditures of ALL offices in 2016 and return a series with the expenditures of each office
+2. Find office w/ max total expenditures in 2016 from the ```office_expenditures()``` series
 3. Find purpose w/ max total expenditures for office w/ max expenditures.
-4. Compute fraction of total expenditure.
+4. Compute the fraction of the expenditures from the offices w/ max expenditures with total expenditures.
 
 
 
