@@ -559,5 +559,3 @@ print("Highest avg staff salary in 2016 = ${:,.2f}".format(max_avg_staff_salary(
 ```
 
     Highest avg staff salary in 2016 = $34,755.23
-
-## Summary:
