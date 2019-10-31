@@ -408,7 +408,7 @@ Next, we find the 'OFFICE' with the highest total expenditures with a 'START DAT
 1. Compute expenditures of ALL offices in 2016 and return a series with the expenditures of each office
 2. Find office w/ max total expenditures in 2016 from the ```office_expenditures()``` series
 3. Find purpose w/ max total expenditures for office w/ max expenditures.
-4. Compute the fraction of the expenditures from the offices w/ max expenditures with total expenditures.
+4. Compute the fraction of the expenditures from the office w/ max expenditures with total expenditures.
 
 
 
