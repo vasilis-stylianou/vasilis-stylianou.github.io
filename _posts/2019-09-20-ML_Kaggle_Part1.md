@@ -1,8 +1,8 @@
 ---
-title: "Machine Learning (Kaggle): Part I"
+title: "IEEE-CIS Fraud Detection (Kaggle): Part I"
 date: 2019-09-20
 tags: [machine learning, Imputation, PCA, OOP, Feature Engineering, pandas, numpy]
-excerpt: OOP, Imputation, Feature Engineering, PCA
+excerpt: Trained ML/DL models to predict fraudulent card activity.
 ---
 
 # Intro:

@@ -1,8 +1,8 @@
 ---
-title: "Machine Learning (Kaggle): Part II"
+title: "IEEE-CIS Fraud Detection (Kaggle): Part II"
 date: 2019-09-20
 tags: [machine learning, sklearn, keras, XGBoost, Neural Networks]
-excerpt: sklearn, keras, XGBoost, Neural Networks
+excerpt: Trained ML/DL models to predict fraudulent card activity.
 ---
 
 # Intro:
