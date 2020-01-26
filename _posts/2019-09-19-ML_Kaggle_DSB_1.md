@@ -22,11 +22,13 @@ Submissions were evaluated on based on the quadratic weighted kappa, which measu
 3. Feature Selection and Preprocessing
 4. Model Training/Evaluation/Selection
 
-In this post I discuss steps 1-2.
+In this post I discuss steps 1-2. In particular, I spend most of my time trying to understand the data and exploring various engineered features. In the following post, I will present the code I submitted to the competition.
 
 [**Github Code**](https://github.com/vasilis-stylianou/Data-Science/tree/master/Projects/Kaggle_IEEE_Fraud) 
 
-# Libraries
+# 1. Data Exploration
+
+## Libraries
 
 
 ```python
@@ -45,7 +47,7 @@ pd.set_option('display.max_columns', 500)
 pd.set_option('display.width', 1000)
 ```
 
-# A. Load Data (a sample)
+## 1.1. Load Data (a sample)
 
 
 ```python
@@ -80,7 +82,7 @@ def load_and_process_data(path, nrows=1000000, timestamp=False):
     return df
 ```
 
-### A.1 Train
+### 1.1.1. Train
 
 
 ```python
@@ -206,7 +208,7 @@ train.head()
 
 Noise: game_time =0  and incorrect 
 
-### A.2 Labels
+### 1.1.2. Labels
 
 
 ```python
@@ -300,7 +302,7 @@ train_labels.head()
 
 
 
-### A3. Merge all Assessment train data
+### 1.1.3. Merge all Assessment train data
 
 
 ```python
@@ -452,9 +454,9 @@ assessments.head()
 
 
 
-# B. Data Exploration/Visualization
+## 1.2. Data Exploration/Visualization
 
-## B1. Bad data
+### 1.2.1. Bad data
 
 Observe that the accuracy (or equivalently the num_correct) is the same for all events generated in the same assessmnet session:
 
@@ -585,7 +587,7 @@ def filter_out_bad_sess(df):
 train = filter_out_bad_sess(train)
 ```
 
-## B2. Visualize cols and accuracies
+### 1.2.2. Visualize cols and accuracies
 
 There are 10 columns:
 
@@ -1082,7 +1084,7 @@ for d in assessments.event_data.values[:10]:
     {'description': 'two...', 'identifier': 'Dot_Two', 'media_type': 'audio', 'total_duration': 510, 'event_count': 10, 'game_time': 4925, 'event_code': 3021}
 
 
-# C. Feature Engineering
+# 2. Feature Engineering
 
 Let's first try to construct "domain-like" features which might correlate to user performance. Intuitively, I'll seek for features that somehow describe:
 
@@ -1096,7 +1098,7 @@ In particular, I'll use the continuous cols to construct aggregated feats.
 
 ## QUESTION: What pct of activities get completed and reach the assessment phase?
 
-## C1. Game_time Aggregations
+## 2.1. Game_time Aggregations
 How much time do the app users spend:<br>
 a) playing in general <br>
 b) playing in a certain level (title) <br>
@@ -1908,7 +1910,7 @@ train[train.type=="Activity"].head()
 
 
 
-## C2. Game_session Aggregations
+## 2.2. Game_session Aggregations
 
 ### a) Count Sessions Per Col
 
@@ -2753,7 +2755,7 @@ count_sess_per_col(train, col='title').head()
 
 ### c) How often do they sign in AND play? And Why?
 
-## C3. Event_code Aggregations
+## 2.3. Event_code Aggregations
 
 
 ```python
@@ -3307,10 +3309,12 @@ count_codes_per_col(train, 'hour').head()
 
 
 
-## 4. Clarity of game instructions
+## 2.4. Clarity of game instructions
 
 Game Clarity:<br>
 a) rate hints based on user performance <br>
 b) check if the user was doing something weird: from coords (e.g. false negatives) <br>
 c) check if the user was doing something weird to familiarize himself/herself with the game (e.g. at the beginnig might press randomly)
+
+(in progress)
 
