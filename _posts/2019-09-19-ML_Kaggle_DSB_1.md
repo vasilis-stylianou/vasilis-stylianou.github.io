@@ -672,7 +672,7 @@ _ = ax.set_xticklabels(ax.get_xticklabels(),rotation=0)
 ```
 
 
-![png](output_39_0.png)
+![png](../images/kaggle_dsb_figs/output_39_0.png)
 
 
 
