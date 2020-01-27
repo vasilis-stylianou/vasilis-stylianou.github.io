@@ -12,7 +12,7 @@ The following work was done for the Kaggle competition: [2019 Data Science Bowl]
 - specs.csv -  the specification of the various event types
 - test.csv - the test set 
 
-and were asked to build a multi-classifier which predicts the level of accuracy of a user completing an in-app assessment. The outcomes in this competition were grouped into 4 groups (labeled accuracy_group in the data):
+and were asked to build **a multi-classifier which predicts the level of accuracy of a user completing an in-app assessment.** The outcomes in this competition were grouped into 4 groups (labeled accuracy_group in the data):
 
 3: the assessment was solved on the first attempt <br/>
 2: the assessment was solved on the second attempt <br/>
@@ -31,7 +31,7 @@ In this post I discuss steps 1-2. In particular, I spend most of my time trying 
 
 [**Github Code**](https://github.com/vasilis-stylianou/Data-Science/tree/master/Projects/Kaggle_IEEE_Fraud) 
 
-# 1 Data Exploration
+# 1. Data Exploration
 
 ## Libraries
 
@@ -1089,7 +1089,7 @@ for d in assessments.event_data.values[:10]:
     {'description': 'two...', 'identifier': 'Dot_Two', 'media_type': 'audio', 'total_duration': 510, 'event_count': 10, 'game_time': 4925, 'event_code': 3021}
 
 
-# 2 Feature Engineering
+# 2. Feature Engineering
 
 Let's first try to construct "domain-like" features which might correlate to user performance. Intuitively, I'll seek for features that somehow describe:
 

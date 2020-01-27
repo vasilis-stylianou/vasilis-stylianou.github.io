@@ -139,6 +139,8 @@ train_labels.head()
 
 # 3. Feature Engineering/Selection and Pre-processing
 
+In the previous post we performed a thorough data exploration and engineered various types of features. Here we will only consider aggregated features as these turned out to be the most important ones.
+
 ## 3.1 Feature Engineering
 
 ```python
@@ -230,7 +232,7 @@ del train, test, train_labels; gc.collect()
 
 
 # 3.2 Data Pre-processing
-
+At last, let us prepare our data for training. In particular, we will convert our data to **"LightGBM" datasets**.
 
 ```python
 x_cols = [col for col in train_df.columns if col not in ['installation_id', 'accuracy_group']]
@@ -246,7 +248,7 @@ val_data = lgb.Dataset(X_val, label=y_val)
 ```
 
 # 4. Training & Evaluation
-
+We wish to train a LightGBM multi-classifier. After spending some time tuning the model, I noticed that the model started converging to the highest possible performance for the following set of parameters:  
 
 ```python
 params = {'n_estimators':2000,
@@ -284,7 +286,7 @@ clf = lgb.train(params,
     Early stopping, best iteration is:
     [311]	training's rmse: 0.871459	valid_1's rmse: 0.99788
 
-
+Recall that our model will be evaluated on the **quadratic weighted kappa metric**:
 
 ```python
 y_pred = clf.predict(X_val)
@@ -292,19 +294,12 @@ cohen_kappa_score(y_val, np.round(y_pred,0), weights= 'quadratic')
 ```
     0.5246363303586942
 
-
-
-
-```python
-test_pred = clf.predict(X_val)
-test_sub['accuracy_group'] = pd.Series(test_pred)
-```
-
-## Save predictions
-
-
-```python
-test_sub.to_csv('submission.csv', index=False)
-```
-
 # Conclusions
+
+![png](../images/kaggle_dsb_figs/cohen_kappa.png)
+
+According to the above statistical classification, our model's accuracy is moderate. It is worth mentioning though that the highest score achieved in the competition was $$0.568$$, which too corresponds to moderate accuracy. 
+
+There are multiple sources of noise in the dataset that one could attribute the shortcomings of our model to. For example, each application install is represented by an ```installation_id```, and though this will typically correspond to one child, there are issues where the same child has used multiple devices (this information was provided by the competition itself).
+
+
