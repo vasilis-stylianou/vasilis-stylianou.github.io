@@ -298,8 +298,7 @@ cohen_kappa_score(y_val, np.round(y_pred,0), weights= 'quadratic')
 
 ![png](../images/kaggle_dsb_figs/cohen_kappa.png)
 
-According to the above statistical classification, our model's accuracy is moderate. It is worth mentioning though that the highest score achieved in the competition was $$0.568$$, which too corresponds to moderate accuracy. 
+According to the above statistical classification, our model's accuracy is moderate. It is worth mentioning though that the highest score achieved in the competition was 0.568, which too corresponds to moderate accuracy. 
 
-There are multiple sources of noise in the dataset that one could attribute the shortcomings of our model to. For example, each application install is represented by an ```installation_id```, and though this will typically correspond to one child, there are issues where the same child has used multiple devices (this information was provided by the competition itself).
-
+There are multiple sources of noise in the dataset that one could attribute the shortcomings of our model to. For example, each application install is represented by an ```installation_id```, and though this will typically correspond to one child, there are issues where the same child has used multiple devices (this information was provided by the competition itself). Perhaps training a different model or spending more time in engineering features could give you a better performance; though it appears (from other contestants) that the dataset itself does not permit for high-accuracy models.
 
