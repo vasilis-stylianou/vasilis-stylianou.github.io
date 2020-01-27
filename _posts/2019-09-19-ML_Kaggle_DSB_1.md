@@ -12,9 +12,14 @@ The following work was done for the Kaggle competition: [2019 Data Science Bowl]
 - specs.csv -  the specification of the various event types
 - test.csv - the test set 
 
-and were asked to predict the level of accuracy of a user completing an in-app assessment. 
+and were asked to build a multi-classifier which predicts the level of accuracy of a user completing an in-app assessment. The outcomes in this competition were grouped into 4 groups (labeled accuracy_group in the data):
 
-Submissions were evaluated on based on the quadratic weighted kappa, which measures the agreement between two outcomes. 
+3: the assessment was solved on the first attempt <br/>
+2: the assessment was solved on the second attempt <br/>
+1: the assessment was solved after 3 or more attempts <br/>
+0: the assessment was never solved <br/>
+
+Submissions were evaluated based on the quadratic weighted kappa, which measures the agreement between two outcomes (i.e. between the actual outcome and our prediction). 
 
 # Index:
 1. Data Exploration
@@ -22,11 +27,11 @@ Submissions were evaluated on based on the quadratic weighted kappa, which measu
 3. Feature Selection and Preprocessing
 4. Model Training/Evaluation/Selection
 
-In this post I discuss steps 1-2. In particular, I spend most of my time trying to understand the data and exploring various engineered features. In the following post, I will present the code I submitted to the competition.
+In this post I discuss steps 1-2. In particular, I spend most of my time trying to understand the data and exploring various engineered features. In the following [post](https://vasilis-stylianou.github.io/ML_Kaggle_DSB_2/), I will present the code I submitted to the competition.
 
 [**Github Code**](https://github.com/vasilis-stylianou/Data-Science/tree/master/Projects/Kaggle_IEEE_Fraud) 
 
-# 1. Data Exploration
+# 1 Data Exploration
 
 ## Libraries
 
@@ -47,7 +52,7 @@ pd.set_option('display.max_columns', 500)
 pd.set_option('display.width', 1000)
 ```
 
-## 1.1. Load Data (a sample)
+## 1.1 Load Data (a sample)
 
 
 ```python
@@ -82,7 +87,7 @@ def load_and_process_data(path, nrows=1000000, timestamp=False):
     return df
 ```
 
-### 1.1.1. Train
+### 1.1.1 Train
 
 
 ```python
@@ -208,7 +213,7 @@ train.head()
 
 Noise: game_time =0  and incorrect 
 
-### 1.1.2. Labels
+### 1.1.2 Labels
 
 
 ```python
@@ -302,7 +307,7 @@ train_labels.head()
 
 
 
-### 1.1.3. Merge all Assessment train data
+### 1.1.3 Merge all Assessment train data
 
 
 ```python
@@ -454,9 +459,9 @@ assessments.head()
 
 
 
-## 1.2. Data Exploration/Visualization
+## 1.2 Data Exploration/Visualization
 
-### 1.2.1. Bad data
+### 1.2.1 Bad data
 
 Observe that the accuracy (or equivalently the num_correct) is the same for all events generated in the same assessmnet session:
 
@@ -587,7 +592,7 @@ def filter_out_bad_sess(df):
 train = filter_out_bad_sess(train)
 ```
 
-### 1.2.2. Visualize cols and accuracies
+### 1.2.2 Visualize cols and accuracies
 
 There are 10 columns:
 
@@ -1084,7 +1089,7 @@ for d in assessments.event_data.values[:10]:
     {'description': 'two...', 'identifier': 'Dot_Two', 'media_type': 'audio', 'total_duration': 510, 'event_count': 10, 'game_time': 4925, 'event_code': 3021}
 
 
-# 2. Feature Engineering
+# 2 Feature Engineering
 
 Let's first try to construct "domain-like" features which might correlate to user performance. Intuitively, I'll seek for features that somehow describe:
 
@@ -1098,7 +1103,7 @@ In particular, I'll use the continuous cols to construct aggregated feats.
 
 ## QUESTION: What pct of activities get completed and reach the assessment phase?
 
-## 2.1. Game_time Aggregations
+## 2.1 Game_time Aggregations
 How much time do the app users spend:<br>
 a) playing in general <br>
 b) playing in a certain level (title) <br>
@@ -1910,7 +1915,7 @@ train[train.type=="Activity"].head()
 
 
 
-## 2.2. Game_session Aggregations
+## 2.2 Game_session Aggregations
 
 ### a) Count Sessions Per Col
 
@@ -2755,7 +2760,7 @@ count_sess_per_col(train, col='title').head()
 
 ### c) How often do they sign in AND play? And Why?
 
-## 2.3. Event_code Aggregations
+## 2.3 Event_code Aggregations
 
 
 ```python
@@ -3309,7 +3314,7 @@ count_codes_per_col(train, 'hour').head()
 
 
 
-## 2.4. Clarity of game instructions
+## 2.4 Clarity of game instructions
 
 Game Clarity:<br>
 a) rate hints based on user performance <br>
@@ -3317,4 +3322,10 @@ b) check if the user was doing something weird: from coords (e.g. false negative
 c) check if the user was doing something weird to familiarize himself/herself with the game (e.g. at the beginnig might press randomly)
 
 (in progress)
+
+# Conclusion
+
+Our dataset seems to be very rich in informative data. However we need to build a machine learning model and check 
+which features are important for our classification task. This is the topic discussion of the [second part](https://vasilis-stylianou.github.io/ML_Kaggle_DSB_2/) of this series of posts.
+
 
