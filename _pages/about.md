@@ -10,9 +10,7 @@ I’m a Data Scientist, with a strong background in mathematics and statistics, 
 
 I hold a BSc and a PhD in Theoretical Physics, obtained from Imperial College London and University of Southern California, respectively. My academic research was focused on String Theory and Quantum Field Theory.
 
-### Tools: 
-Python \| Docker \| SQL \| Bash \| Dash \| Git \| Heroku <br/>
-### Libraries:
-Tensorflow \| Keras \| Scikit-learn \| NumPy \| SciPy \| Pandas \| NLTK \| Matplotlib \| Seaborn \| Plotly<br/>
-### Skills:
-Machine Learning \| Deep Learning \|  NLP \| Visualization \| Statistics \| Linear Algebra \| Multivariable Calculus \| Optimization \| Theoretical Physics
+<font color='royalblue'>Tools:</font> Python \| Docker \| SQL \| Bash \| Dash \| Git \| Heroku <br/>
+<font color='royalblue'>Libraries:</font> Tensorflow \| Keras \| Scikit-learn \| NumPy \| SciPy \| Pandas \| NLTK \| Matplotlib \| Seaborn \| Plotly<br/>
+<font color='royalblue'>Skills:</font> Machine Learning \| Deep Learning \|  NLP \| Visualization \| Statistics \| Linear Algebra \| Multivariable Calculus \| Optimization \| Theoretical Physics
+
