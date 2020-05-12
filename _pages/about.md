@@ -12,4 +12,4 @@ I hold a BSc and a PhD in Theoretical Physics, obtained from Imperial College Lo
 
 **Tools:** Python \| Docker \| SQL \| Bash \| Dash \| Git \| Heroku <br/>
 **Libraries:** Tensorflow \| Keras \| Scikit-learn \| NumPy \| SciPy \| Pandas \| NLTK \| Matplotlib \| Seaborn \| Plotly<br/>
-**Skills:** Machine Learning \| Deep Learning \|  NLP \| Visualization \| Statistics \| Linear Algebra \| Multivariable Calculus \| Optimization \| Theoretical Physics
+<b>Skills:</b> Machine Learning \| Deep Learning \|  NLP \| Visualization \| Statistics \| Linear Algebra \| Multivariable Calculus \| Optimization \| Theoretical Physics
