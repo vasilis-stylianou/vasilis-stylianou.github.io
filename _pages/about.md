@@ -2,7 +2,8 @@
 title: "About Me"
 permalink: /about/
 header:
-  image: "/images/background-AI2.jpg"
+image: "/images/background-AI2.jpg"
+mathjax: "true"
 ---
 
 I’m a Data Scientist, with a strong background in mathematics and statistics, skilled in Python, SQL, and Machine Learning.
