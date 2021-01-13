@@ -13,6 +13,8 @@ I hold a BSc and a PhD in Theoretical Physics, obtained from Imperial College Lo
 <!-- <font color='royalblue'>Python Libraries:</font>  -->
 ### Python Libraries:
 Tensorflow \| Keras \| Scikit-learn \| NumPy \| SciPy \| Pandas \| NLTK \| Matplotlib \| Seaborn \| Plotly \| Dash
-<font color='royalblue'>Programming:</font> Python (4+ years) \| SQL \| Bash \| Docker \| Git \| Mathematica
-<font color='royalblue'>Mathematics:</font> Statistics \| Linear Algebra \| Multivariable Calculus \| Optimization \| Partial Differential Equations \| Group Theory \| Differential Geometry 
+### Programming:
+ Python (4+ years) \| SQL \| Bash \| Docker \| Git \| Mathematica
+### Mathematics: 
+Statistics \| Linear Algebra \| Multivariable Calculus \| Optimization \| Partial Differential Equations \| Group Theory \| Differential Geometry 
 
